@@ -1,7 +1,7 @@
 //
 //  ViewController.swift
 //
-// Signup page for parents and students
+// Login page for everyone
 //
 //  SwiftBudget
 //
