@@ -10,7 +10,7 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+class LoginPage: UIView {
 
     var loginLabel: UILabel!
     var nameField: UITextField!
@@ -18,16 +18,18 @@ class ViewController: UIViewController {
     var parentEmailField: UITextField!
     var passwordField: UITextField!
     var submitButton: UIButton!
+    var signupButton: UIButton!
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        // Do any additional setup after loading the view.
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        self.backgroundColor = .white
         
         // MARK: Initializing the UI elements
         setupLoginLabel()
         setupEmailField()
         setupPasswordField()
         setupSubmitButton()
+        setupSignupButton()
         
         // MARK: Initializing the constraints
         initConstraints()
@@ -39,7 +41,7 @@ class ViewController: UIViewController {
         loginLabel.font = UIFont.boldSystemFont(ofSize: 24)
         loginLabel.textAlignment = .center
         loginLabel.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(loginLabel)
+        self.addSubview(loginLabel)
     }
 
     func setupEmailField() {
@@ -47,7 +49,7 @@ class ViewController: UIViewController {
         emailField.placeholder = "Email"
         emailField.borderStyle = .roundedRect
         emailField.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(emailField)
+        self.addSubview(emailField)
     }
     
     func setupPasswordField() {
@@ -56,7 +58,7 @@ class ViewController: UIViewController {
         passwordField.borderStyle = .roundedRect
         passwordField.isSecureTextEntry = true
         passwordField.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(passwordField)
+        self.addSubview(passwordField)
     }
     
     func setupSubmitButton() {
@@ -66,7 +68,17 @@ class ViewController: UIViewController {
         submitButton.backgroundColor = .systemBlue
         submitButton.layer.cornerRadius = 10
         submitButton.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(submitButton)
+        self.addSubview(submitButton)
+    }
+    
+    func setupSignupButton() {
+        signupButton = UIButton(type: .system)
+        signupButton.setTitle("Register", for: .normal)
+        signupButton.setTitleColor(.white, for: .normal)
+        signupButton.backgroundColor = .systemBlue
+        signupButton.layer.cornerRadius = 10
+        signupButton.translatesAutoresizingMaskIntoConstraints = false
+        self.addSubview(signupButton)
     }
     
     func initConstraints() {
@@ -75,8 +87,8 @@ class ViewController: UIViewController {
         
         NSLayoutConstraint.activate([
             // Login Label Constraints
-            loginLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 32),
-            loginLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            loginLabel.topAnchor.constraint(equalTo: self.safeAreaLayoutGuide.topAnchor, constant: 32),
+            loginLabel.centerXAnchor.constraint(equalTo: self.centerXAnchor),
             
             // Email Field Constraints
             emailField.topAnchor.constraint(equalTo: loginLabel.bottomAnchor, constant: fieldSpacing),
@@ -91,7 +103,15 @@ class ViewController: UIViewController {
             submitButton.topAnchor.constraint(equalTo: passwordField.bottomAnchor, constant: sizeableGap),
             submitButton.leadingAnchor.constraint(equalTo: passwordField.leadingAnchor),
             submitButton.trailingAnchor.constraint(equalTo: passwordField.trailingAnchor),
-            submitButton.heightAnchor.constraint(equalToConstant: 50)
+            submitButton.heightAnchor.constraint(equalToConstant: 50),
+            
+            signupButton.topAnchor.constraint(equalTo: submitButton.bottomAnchor, constant: sizeableGap),
+            signupButton.leadingAnchor.constraint(equalTo: submitButton.leadingAnchor),
+            signupButton.trailingAnchor.constraint(equalTo: submitButton.trailingAnchor),
+            signupButton.heightAnchor.constraint(equalToConstant: 50)
         ])
+    }
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }

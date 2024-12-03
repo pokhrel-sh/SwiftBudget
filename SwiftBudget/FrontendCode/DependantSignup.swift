@@ -10,7 +10,7 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+class DependantSignup: UIViewController {
 
     var loginLabel: UILabel!
     var nameField: UITextField!

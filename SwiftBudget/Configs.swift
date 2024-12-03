@@ -1,0 +1,13 @@
+//
+//  Configs.swift
+//  SwiftBudget
+//
+//  Created by Kidus Yohannes on 12/3/24.
+//
+//
+
+import Foundation
+class Configs{
+    static let tableViewContactsID = "tableViewContactsID"
+    static var currRole = ""
+}

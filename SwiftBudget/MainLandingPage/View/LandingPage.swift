@@ -10,7 +10,7 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+class LandingPage: UIView {
 
     var titleLabel: UILabel!
     var familyLabel: UILabel!
@@ -19,9 +19,9 @@ class ViewController: UIViewController {
     var dependantButton: UIButton!
     var studentButton: UIButton!
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        // Do any additional setup after loading the view.
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        self.backgroundColor = .white
         
         // MARK: Initializing the UI elements
         setupLabelAppName()
@@ -35,13 +35,17 @@ class ViewController: UIViewController {
         initConstraints()
     }
     
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     func setupLabelAppName() {
         titleLabel = UILabel()
         titleLabel.text = "SwiftBudget"
         titleLabel.font = UIFont.boldSystemFont(ofSize: 24)
         titleLabel.textAlignment = .center
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(titleLabel)
+        self.addSubview(titleLabel)
     }
 
     func setupFamilyLabel() {
@@ -49,7 +53,7 @@ class ViewController: UIViewController {
         familyLabel.text = "Family"
         familyLabel.font = UIFont.systemFont(ofSize: 18)
         familyLabel.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(familyLabel)
+        self.addSubview(familyLabel)
     }
     
     func setupIndependantLabel() {
@@ -57,28 +61,28 @@ class ViewController: UIViewController {
         independantLabel.text = "Independant"
         independantLabel.font = UIFont.systemFont(ofSize: 18)
         independantLabel.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(independantLabel)
+        self.addSubview(independantLabel)
     }
     
     func setupParentsButton() {
         parentButton = UIButton(type: .system)
         parentButton.setTitle("Parents", for: .normal)
         parentButton.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(parentButton)
+        self.addSubview(parentButton)
     }
     
     func setupDependantButton() {
         dependantButton = UIButton(type: .system)
         dependantButton.setTitle("Dependants", for: .normal)
         dependantButton.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(dependantButton)
+        self.addSubview(dependantButton)
     }
     
     func setupStudentButton() {
         studentButton = UIButton(type: .system)
         studentButton.setTitle("Student", for: .normal)
         studentButton.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(studentButton)
+        self.addSubview(studentButton)
     }
     
     func initConstraints() {
@@ -86,28 +90,28 @@ class ViewController: UIViewController {
         
         NSLayoutConstraint.activate([
             // Title Label Constraints
-            titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 32),
-            titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            titleLabel.topAnchor.constraint(equalTo: self.safeAreaLayoutGuide.topAnchor, constant: 32),
+            titleLabel.centerXAnchor.constraint(equalTo: self.centerXAnchor),
             
             // Family Label Constraints
             familyLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 50),
-            familyLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            familyLabel.centerXAnchor.constraint(equalTo: self.centerXAnchor),
             
             // Parent Button Constraints
             parentButton.topAnchor.constraint(equalTo: familyLabel.bottomAnchor, constant: 16),
-            parentButton.trailingAnchor.constraint(equalTo: view.centerXAnchor, constant: -8),
+            parentButton.trailingAnchor.constraint(equalTo: self.centerXAnchor, constant: -8),
             
             // Dependant Button Constraints
             dependantButton.topAnchor.constraint(equalTo: familyLabel.bottomAnchor, constant: 16),
-            dependantButton.leadingAnchor.constraint(equalTo: view.centerXAnchor, constant: 8),
+            dependantButton.leadingAnchor.constraint(equalTo: self.centerXAnchor, constant: 8),
             
             // Gap Between Sections
             independantLabel.topAnchor.constraint(equalTo: parentButton.bottomAnchor, constant: sizeableGap),
-            independantLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            independantLabel.centerXAnchor.constraint(equalTo: self.centerXAnchor),
             
             // Student Button Constraints
             studentButton.topAnchor.constraint(equalTo: independantLabel.bottomAnchor, constant: 16),
-            studentButton.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+            studentButton.centerXAnchor.constraint(equalTo: self.centerXAnchor)
         ])
     }
 }
