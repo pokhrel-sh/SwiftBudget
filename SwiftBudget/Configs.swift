@@ -9,5 +9,5 @@
 import Foundation
 class Configs{
     static let tableViewContactsID = "tableViewContactsID"
-    static var currRole = ""
+    static var currRole:Role = .student //MARK: TODO:
 }
