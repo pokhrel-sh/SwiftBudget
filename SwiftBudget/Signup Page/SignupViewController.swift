@@ -16,73 +16,90 @@ class SignupViewController: UIViewController {
     override func loadView() {
         view = signupScreen
     }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Register"
         
         signupScreen.submitButton.addTarget(self, action: #selector(onRegisterTapped), for: .touchUpInside)
-
     }
     
-    @objc func onRegisterTapped(){
-        //MARK: creating a new user on Firebase...
-        registerNewAccount()
+    @objc func onRegisterTapped() {
+        // Validate the input fields before attempting to register
+        guard let name = signupScreen.nameField.text, !name.isEmpty,
+              let email = signupScreen.emailField.text, isValidEmail(email),
+              let password = signupScreen.passwordField.text, password.count >= 6 else {
+            showError("Please ensure all fields are filled in correctly.")
+            return
+        }
+        
+        // Register a new account
+        registerNewAccount(name: name, email: email, password: password)
     }
     
-    func registerNewAccount(){
-        //MARK: create a Firebase user with email and password...
-        if let name = signupScreen.nameField.text,
-           let email = signupScreen.emailField.text,
-           let password = signupScreen.passwordField.text{
-            //Validations....
-            Auth.auth().createUser(withEmail: email, password: password, completion: {result, error in
-                if error == nil{
-                    //MARK: the user creation is successful...
-                    self.setNameOfTheUserInFirebaseAuth(name: name)
-                    self.setUserInFirestore(name: name, email: email)
-
-                }else{
-                    //MARK: there is a error creating the user...
-                    print("did not register")
-                    print(error)
-                }
-            })
+    func registerNewAccount(name: String, email: String, password: String) {
+        // Create a Firebase user with email and password
+        Auth.auth().createUser(withEmail: email, password: password) { result, error in
+            if let error = error {
+                self.showError("Failed to register: \(error.localizedDescription)")
+                return
+            }
+            
+            // Successful user creation
+            self.setNameOfTheUserInFirebaseAuth(name: name)
+            self.setUserInFirestore(name: name, email: email)
         }
     }
     
-    //MARK: We set the name of the user after we create the account...
-    func setNameOfTheUserInFirebaseAuth(name: String){
+    func setNameOfTheUserInFirebaseAuth(name: String) {
+        // Update the user's display name in Firebase Auth
         let changeRequest = Auth.auth().currentUser?.createProfileChangeRequest()
         changeRequest?.displayName = name
-        changeRequest?.commitChanges(completion: {(error) in
-            if error == nil{
-                //MARK: the profile update is successful...
-                self.navigationController?.popViewController(animated: true)
-            }else{
-                //MARK: there was an error updating the profile...
-                print("Error occured: \(String(describing: error))")
+        changeRequest?.commitChanges { error in
+            if let error = error {
+                self.showError("Error updating profile: \(error.localizedDescription)")
+                return
             }
-        })
+            
+            // Navigate back to the previous screen after successful registration
+            self.navigationController?.popViewController(animated: true)
+        }
     }
     
-    func setUserInFirestore(name: String, email: String){
+    func setUserInFirestore(name: String, email: String) {
+        guard let userID = Auth.auth().currentUser?.uid else {
+            print("Error: User ID is not available.")
+            return
+        }
+
         let db = Firestore.firestore()
-        let userID = Auth.auth().currentUser?.uid
 
-        let role = Configs.currRole
+        let role = Configs.currRole.rawValue
 
-        // Save the role to Firestore
-        db.collection("users").document(userID!).setData([
+        db.collection("users").document(userID).setData([
             "email": email,
             "familyCircleId": "",
             "name": name,
             "role": role
-        ]) { err in
-            if let err = err {
-                print("Error writing document: \(err)")
+        ]) { error in
+            if let error = error {
+                print("Error saving user data: \(error.localizedDescription)")
             } else {
                 print("User successfully written to Firestore!")
             }
         }
     }
+    // MARK: - Helper Functions
+    
+    func isValidEmail(_ email: String) -> Bool {
+        let emailRegex = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}"
+        return NSPredicate(format: "SELF MATCHES %@", emailRegex).evaluate(with: email)
+    }
+    
+    func showError(_ message: String) {
+        let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true)
+    }
 }
+
