@@ -94,21 +94,25 @@ class LoginPage: UIView {
             emailField.topAnchor.constraint(equalTo: loginLabel.bottomAnchor, constant: fieldSpacing),
             emailField.leadingAnchor.constraint(equalTo: loginLabel.leadingAnchor),
             emailField.trailingAnchor.constraint(equalTo: loginLabel.trailingAnchor),
+            emailField.widthAnchor.constraint(equalToConstant: 200),
             // Password Field Constraints
             passwordField.topAnchor.constraint(equalTo: emailField.bottomAnchor, constant: fieldSpacing),
             passwordField.leadingAnchor.constraint(equalTo: emailField.leadingAnchor),
             passwordField.trailingAnchor.constraint(equalTo: emailField.trailingAnchor),
+            passwordField.widthAnchor.constraint(equalToConstant: 200),
             
             // Submit Button Constraints
             submitButton.topAnchor.constraint(equalTo: passwordField.bottomAnchor, constant: sizeableGap),
             submitButton.leadingAnchor.constraint(equalTo: passwordField.leadingAnchor),
             submitButton.trailingAnchor.constraint(equalTo: passwordField.trailingAnchor),
             submitButton.heightAnchor.constraint(equalToConstant: 50),
+            submitButton.widthAnchor.constraint(equalToConstant: 100),
             
             signupButton.topAnchor.constraint(equalTo: submitButton.bottomAnchor, constant: sizeableGap),
             signupButton.leadingAnchor.constraint(equalTo: submitButton.leadingAnchor),
             signupButton.trailingAnchor.constraint(equalTo: submitButton.trailingAnchor),
-            signupButton.heightAnchor.constraint(equalToConstant: 50)
+            signupButton.heightAnchor.constraint(equalToConstant: 50),
+            signupButton.widthAnchor.constraint(equalToConstant: 100),
         ])
     }
     required init?(coder: NSCoder) {

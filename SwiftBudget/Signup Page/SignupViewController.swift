@@ -43,6 +43,7 @@ class SignupViewController: UIViewController {
 
                 }else{
                     //MARK: there is a error creating the user...
+                    print("did not register")
                     print(error)
                 }
             })
