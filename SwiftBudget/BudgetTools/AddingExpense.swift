@@ -1,162 +1,122 @@
-//
-//  ViewController.swift
-//  ExpenseTracker
-//
-//  Created by [Your Name] on [Date].
-//
-
 import UIKit
 
 class AddingExpense: UIView {
     
-    var expenseTitle: UILabel!
-    var addExpenseLabel: UILabel!
-    var expenseAmountTextField: UITextField!
-    var expenseNameLabel: UILabel!
-    var expenseNameTextField: UITextField!
-    var expenseDescriptionLabel: UILabel!
-    var expenseDescriptionTextField: UITextField!
-    var addExpenseButton: UIButton!
-    var viewAllExpensesButton: UIButton!
     
+    var nameTextField: UITextField!
+    var priceTextField: UITextField!
+    var dateTextField: UITextField!
+    var addedByTextField: UITextField!
+    var selectChildTextField: UITextField!
+    var saveButton: UIButton!
     
-    
+    // Initialization
     override init(frame: CGRect) {
         super.init(frame: frame)
-        self.backgroundColor = .white
         
-        setupExpenseTitle()
-        setupAddExpenseLabel()
-        setupExpenseAmountTextField()
-        setupExpenseNameLabel()
-        setupExpenseNameTextField()
-        setupExpenseDescriptionLabel()
-        setupExpenseDescriptionTextField()
-        setupAddExpenseButton()
-        setupViewAllExpensesButton()
+        setupNameField()
+        setupPriceField()
+        setupDateField()
+        setupAddedByField()
+        setupSelectChildField()
+        setupSaveButton()
+        
+        initConstraints()
     }
     
+    func setupNameField() {
+        nameTextField = UITextField()
+        nameTextField.placeholder = "Expense Name"
+        nameTextField.borderStyle = .roundedRect
+        nameTextField.translatesAutoresizingMaskIntoConstraints = false
+        self.addSubview(nameTextField)
+    }
+    
+    func setupPriceField() {
+        priceTextField = UITextField()
+        priceTextField.placeholder = "Price"
+        priceTextField.keyboardType = .decimalPad
+        priceTextField.borderStyle = .roundedRect
+        priceTextField.translatesAutoresizingMaskIntoConstraints = false
+        self.addSubview(priceTextField)
+    }
+    
+    func setupDateField() {
+        dateTextField = UITextField()
+        dateTextField.placeholder = "Date (MM/DD/YYYY)"
+        dateTextField.borderStyle = .roundedRect
+        dateTextField.translatesAutoresizingMaskIntoConstraints = false
+        self.addSubview(dateTextField)
+    }
+    
+    func setupAddedByField() {
+        addedByTextField = UITextField()
+        addedByTextField.placeholder = "Added By"
+        addedByTextField.isEnabled = false
+        addedByTextField.borderStyle = .roundedRect
+        addedByTextField.translatesAutoresizingMaskIntoConstraints = false
+        self.addSubview(addedByTextField)
+    }
+    
+    func setupSelectChildField() {
+        selectChildTextField = UITextField()
+        selectChildTextField.placeholder = "Select Child"
+        selectChildTextField.borderStyle = .roundedRect
+        selectChildTextField.isHidden = true
+        selectChildTextField.translatesAutoresizingMaskIntoConstraints = false
+        self.addSubview(selectChildTextField)
+    }
+    
+    func setupSaveButton() {
+        saveButton = UIButton(type: .system)
+        saveButton.setTitle("Save Expense", for: .normal)
+        saveButton.backgroundColor = .systemBlue
+        saveButton.tintColor = .white
+        saveButton.layer.cornerRadius = 5
+        saveButton.translatesAutoresizingMaskIntoConstraints = false
+        self.addSubview(saveButton)
+    }
+    
+
     required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        super.init(coder: coder)
     }
     
-    private func setupExpenseTitle() {
-        expenseTitle = UILabel()
-        expenseTitle.text = "Expense Tracker"
-        expenseTitle.textAlignment = .center
-        expenseTitle.font = UIFont.boldSystemFont(ofSize: 24)
-        expenseTitle.translatesAutoresizingMaskIntoConstraints = false
-        self.addSubview(expenseTitle)
-    }
-    
-    private func setupAddExpenseLabel() {
-        addExpenseLabel = UILabel()
-        addExpenseLabel.text = "How much did you spend?"
-        addExpenseLabel.font = UIFont.systemFont(ofSize: 18)
-        addExpenseLabel.translatesAutoresizingMaskIntoConstraints = false
-        self.addSubview(addExpenseLabel)
-    }
-    
-    private func setupExpenseAmountTextField() {
-        expenseAmountTextField = UITextField()
-        expenseAmountTextField.placeholder = "Enter Expense Amount"
-        expenseAmountTextField.borderStyle = .roundedRect
-        expenseAmountTextField.keyboardType = .numberPad
-        expenseAmountTextField.translatesAutoresizingMaskIntoConstraints = false
-        self.addSubview(expenseAmountTextField)
-    }
-    
-    private func setupExpenseNameLabel() {
-        expenseNameLabel = UILabel()
-        expenseNameLabel.text = "What did you spend it on?"
-        expenseNameLabel.font = UIFont.systemFont(ofSize: 18)
-        expenseNameLabel.translatesAutoresizingMaskIntoConstraints = false
-        self.addSubview(expenseNameLabel)
-    }
-    
-    private func setupExpenseNameTextField() {
-        expenseNameTextField = UITextField()
-        expenseNameTextField.placeholder = "Expense Name"
-        expenseNameTextField.borderStyle = .roundedRect
-        expenseNameTextField.translatesAutoresizingMaskIntoConstraints = false
-        self.addSubview(expenseNameTextField)
-    }
-    
-    private func setupExpenseDescriptionLabel() {
-        expenseDescriptionLabel = UILabel()
-        expenseDescriptionLabel.text = "Elaborate the spending"
-        expenseDescriptionLabel.font = UIFont.systemFont(ofSize: 16)
-        expenseDescriptionLabel.translatesAutoresizingMaskIntoConstraints = false
-        self.addSubview(expenseDescriptionLabel)
-    }
-    
-    private func setupExpenseDescriptionTextField() {
-        expenseDescriptionTextField = UITextField()
-        expenseDescriptionTextField.placeholder = "Enter Description"
-        expenseDescriptionTextField.borderStyle = .roundedRect
-        expenseDescriptionTextField.translatesAutoresizingMaskIntoConstraints = false
-        self.addSubview(expenseDescriptionTextField)
-    }
-    
-    private func setupAddExpenseButton() {
-        addExpenseButton = UIButton(type: .system)
-        addExpenseButton.setTitle("Add Expense", for: .normal)
-        addExpenseButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 18)
-        addExpenseButton.translatesAutoresizingMaskIntoConstraints = false
-        self.addSubview(addExpenseButton)
-    }
-    
-    private func setupViewAllExpensesButton() {
-        viewAllExpensesButton = UIButton(type: .system)
-        viewAllExpensesButton.setTitle("View All Expenses", for: .normal)
-        viewAllExpensesButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 18)
-        viewAllExpensesButton.translatesAutoresizingMaskIntoConstraints = false
-        self.addSubview(viewAllExpensesButton)
-    }
-    
-    private func initConstraints() {
+    func initConstraints() {
+        
+        // Layout
         NSLayoutConstraint.activate([
-            // Expense Title
-            expenseTitle.topAnchor.constraint(equalTo: self.safeAreaLayoutGuide.topAnchor, constant: 20),
-            expenseTitle.centerXAnchor.constraint(equalTo: self.centerXAnchor),
+            // Name TextField
+            nameTextField.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 20),
+            nameTextField.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
+            nameTextField.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
             
-            // Add Expense Label
-            addExpenseLabel.topAnchor.constraint(equalTo: expenseTitle.bottomAnchor, constant: 20),
-            addExpenseLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 20),
+            // Price TextField
+            priceTextField.topAnchor.constraint(equalTo: nameTextField.bottomAnchor, constant: 20),
+            priceTextField.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
+            priceTextField.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
             
-            // Expense Amount TextField
-            expenseAmountTextField.topAnchor.constraint(equalTo: addExpenseLabel.bottomAnchor, constant: 10),
-            expenseAmountTextField.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 20),
-            expenseAmountTextField.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -20),
-            expenseAmountTextField.heightAnchor.constraint(equalToConstant: 40),
+            // Date TextField
+            dateTextField.topAnchor.constraint(equalTo: priceTextField.bottomAnchor, constant: 20),
+            dateTextField.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
+            dateTextField.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
             
-            // Expense Name Label
-            expenseNameLabel.topAnchor.constraint(equalTo: expenseAmountTextField.bottomAnchor, constant: 20),
-            expenseNameLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 20),
+            // Added By TextField
+            addedByTextField.topAnchor.constraint(equalTo: dateTextField.bottomAnchor, constant: 20),
+            addedByTextField.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
+            addedByTextField.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
             
-            // Expense Name TextField
-            expenseNameTextField.topAnchor.constraint(equalTo: expenseNameLabel.bottomAnchor, constant: 10),
-            expenseNameTextField.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 20),
-            expenseNameTextField.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -20),
-            expenseNameTextField.heightAnchor.constraint(equalToConstant: 40),
+            // Select Child TextField
+            selectChildTextField.topAnchor.constraint(equalTo: addedByTextField.bottomAnchor, constant: 20),
+            selectChildTextField.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
+            selectChildTextField.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
             
-            // Expense Description Label
-            expenseDescriptionLabel.topAnchor.constraint(equalTo: expenseNameTextField.bottomAnchor, constant: 20),
-            expenseDescriptionLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 20),
-            
-            // Expense Description TextField
-            expenseDescriptionTextField.topAnchor.constraint(equalTo: expenseDescriptionLabel.bottomAnchor, constant: 10),
-            expenseDescriptionTextField.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 20),
-            expenseDescriptionTextField.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -20),
-            expenseDescriptionTextField.heightAnchor.constraint(equalToConstant: 40),
-            
-            // Add Expense Button
-            addExpenseButton.topAnchor.constraint(equalTo: expenseDescriptionTextField.bottomAnchor, constant: 30),
-            addExpenseButton.centerXAnchor.constraint(equalTo: self.centerXAnchor),
-            
-            // View All Expenses Button
-            viewAllExpensesButton.topAnchor.constraint(equalTo: addExpenseButton.bottomAnchor, constant: 20),
-            viewAllExpensesButton.centerXAnchor.constraint(equalTo: self.centerXAnchor)
+            // Save Button
+            saveButton.topAnchor.constraint(equalTo: selectChildTextField.bottomAnchor, constant: 30),
+            saveButton.centerXAnchor.constraint(equalTo: centerXAnchor),
+            saveButton.widthAnchor.constraint(equalToConstant: 150),
+            saveButton.heightAnchor.constraint(equalToConstant: 50),
         ])
     }
 }
+

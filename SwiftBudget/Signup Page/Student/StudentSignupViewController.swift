@@ -28,7 +28,7 @@ class StudentSignupViewController: UIViewController {
 
     @objc private func registerStudent() {
         guard let name =  studentView.nameField.text, !name.isEmpty,
-              let email = studentView.emailField.text, !email.isEmpty,
+              let email = studentView.emailField.text?.lowercased(),
               let password = studentView.passwordField.text, !password.isEmpty else {
             showAlert("Please fill in all fields.")
             return
@@ -62,6 +62,7 @@ class StudentSignupViewController: UIViewController {
             }
             self.db.collection("budget").document(uid).setData([
                 "email": email,
+                "parent_email": email,
             ]) { error in
                 if let error = error {
                     self.showAlert("Database error: \(error.localizedDescription)")

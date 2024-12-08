@@ -30,7 +30,7 @@ class ParentRegisterViewController: UIViewController {
 
     @objc private func registerParent() {
         guard let name = parentView.nameField.text, !name.isEmpty,
-              let email = parentView.emailField.text, !email.isEmpty,
+              let email = parentView.emailField.text?.lowercased(),
               let password = parentView.passwordField.text, !password.isEmpty else {
             showAlert("Please fill in all fields.")
             return
@@ -54,6 +54,20 @@ class ParentRegisterViewController: UIViewController {
                 "email": email,
                 "role": "Parent"
             ]) { error in
+                if let error = error {
+                    self.showAlert("Database error: \(error.localizedDescription)")
+                } else {
+                    self.showAlert("Parent registration successful!", action: {
+                        self.navigationController?.pushViewController(DashboardViewController(), animated: true)
+                    })
+                }
+            }
+            
+            self.db.collection("familyCircle").document(uid).setData([
+                "name": name,
+                "email": email,
+                "kids": [],
+            ])  { error in
                 if let error = error {
                     self.showAlert("Database error: \(error.localizedDescription)")
                 } else {

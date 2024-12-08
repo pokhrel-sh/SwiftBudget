@@ -21,9 +21,9 @@ class KidRegisterViewController: UIViewController {
 
     @objc private func registerKid() {
         guard let name = kidView.nameField.text, !name.isEmpty,
-              let email = kidView.emailField.text, !email.isEmpty,
+              let email = kidView.emailField.text?.lowercased(),
               let password = kidView.passwordField.text, !password.isEmpty,
-              let parentEmail = kidView.parentEmailField.text, !parentEmail.isEmpty else {
+              let parentEmail = kidView.parentEmailField.text?.lowercased(), !parentEmail.isEmpty else {
             showAlert("Please fill in all fields.")
             return
         }
@@ -76,13 +76,47 @@ class KidRegisterViewController: UIViewController {
             self.db.collection("users2").document(uid).setData(userData) { error in
                 if let error = error {
                     self.showAlert("Database error: \(error.localizedDescription)")
-                } else {
-                    // Navigate to Dashboard
-                    self.navigateToDashboard()
+                    return
+                }
+            }
+
+            self.db.collection("familyCircle").whereField("email", isEqualTo: parentEmail)
+                .getDocuments { snapshot, error in
+                    if let error = error {
+                        self.showAlert("Error finding family circle: \(error.localizedDescription)")
+                        return
+                    }
+
+                    if let familyDoc = snapshot?.documents.first {
+                        // Parent found, now update the kids list
+                        self.db.collection("familyCircle").document(familyDoc.documentID).updateData([
+                            "kids": FieldValue.arrayUnion([email])
+                        ]) { error in
+                            if let error = error {
+                                self.showAlert("Error adding kid to family circle: \(error.localizedDescription)")
+                            } else {
+                                self.showAlert("Registration successful!", action: {
+                                    self.navigateToDashboard()
+                                })
+                            }
+                        }
+                    } else {
+                        self.showAlert("Parent not found in family circle.")
+                    }
+                }
+            
+            // Save the budget data
+            self.db.collection("budget").document(uid).setData([
+                "email": email,
+                "parent_email": parentEmail,
+            ]) { error in
+                if let error = error {
+                    self.showAlert("Database error: \(error.localizedDescription)")
                 }
             }
         }
     }
+
 
     private func navigateToDashboard() {
         let dashboardVC = DashboardViewController()

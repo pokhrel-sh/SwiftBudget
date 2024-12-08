@@ -61,14 +61,11 @@ class LoginViewController: UIViewController {
                     } else if let snapshot = snapshot, snapshot.exists {
                         // Successfully fetched user details
                         print("User details: \(snapshot.data() ?? [:])")
-                        
-                        // Navigate to Dashboard
                         let dashboardVC = DashboardViewController()
                         NotificationCenter.default.post(name: NSNotification.Name("LoginSuccessful"), object: nil)
                         self.navigationController?.pushViewController(dashboardVC, animated: true)
                         print("User logged in successfully.")
                     } else {
-                        // No user details found in Firestore
                         self.showAlert(title: "Error", message: "User details not found in Firestore.")
                     }
                 }
