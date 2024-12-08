@@ -4,13 +4,13 @@
 //
 //  Created by Kidus Yohannes on 12/4/24.
 //
+import FirebaseFirestore
 
 struct User {
-    var id: String
     var name: String
     var email: String
-    var role: Role
-    var familyCircleId: String?
+    var role: Role?
+    var parentEmail: String
 }
 
 enum Role: String {
@@ -19,17 +19,26 @@ enum Role: String {
 }
 
 struct FamilyCircle {
-    var id: String
-    var parentId: String
-    var studentIds: [String]
+    var name: String
+    var email: String
 }
 
 struct Expense {
     var name: String
     var price: Double
-    var date: String
+    var date: Date
     var image: String // URL or local image path
     var addedBy: String
     var for_user: String
 }
+
+struct Budget {
+    var name: String
+    var amount: Double
+    var date: Date
+    var image: String = "" // URL or local image path
+    var addedBy: String
+    var for_user: String
+}
+
 

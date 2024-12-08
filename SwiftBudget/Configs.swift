@@ -8,6 +8,6 @@
 
 import Foundation
 class Configs{
-    static let tableViewContactsID = "tableViewContactsID"
+    static let tableViewStudentsID = "tableViewStudentsID"
     static var currRole:Role = .student //MARK: TODO:
 }

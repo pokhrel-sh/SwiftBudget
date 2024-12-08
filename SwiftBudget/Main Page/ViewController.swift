@@ -37,23 +37,6 @@ class ViewController: UIViewController {
         landingPage.loginButton.addTarget(self, action: #selector(navigatetoLogin), for: .touchUpInside)
     }
     
-//        override func viewWillAppear(_ animated: Bool) {
-//            super.viewWillAppear(animated)
-//    
-//            //MARK: handling if the Authentication state is changed (sign in, sign out, register)...
-//            handleAuth = Auth.auth().addStateDidChangeListener{ auth, user in
-//                if user == nil{
-//                    //MARK: not signed in...
-//                    self.setupRightBarButton(isLoggedin: false)
-//    
-//                }else{
-//                    //MARK: the user is signed in...
-//                    self.setupRightBarButton(isLoggedin: true)
-//    
-//                }
-//            }
-//        }
-    
     @objc private func navigateToStudentSignup() {
         let studentSignupVC = StudentSignupViewController()
         navigationController?.pushViewController(studentSignupVC, animated: true)
@@ -71,6 +54,14 @@ class ViewController: UIViewController {
     }
     
     @objc private func navigatetoLogin() {
+        do{
+            try Auth.auth().signOut()
+            print("User Logged Out")
+            self.setupRightBarButton(isLoggedin: false)
+        }catch{
+            print("Error occured!")
+        }
+        
         let loginVC = LoginViewController()
         navigationController?.pushViewController(loginVC, animated: true)
     }

@@ -6,13 +6,20 @@
 //
 
 import UIKit
+import Firebase
+import FirebaseAuth
 
 class AddingIncomeViewController: UIViewController {
     
     let addIncomePage = AddingIncome()
+    var selectedChild: String? // Track the selected child
+    var currentUser:FirebaseAuth.User?
+    var SelectedUser:String?
+    let database = Firestore.firestore()
+    
     
     override func loadView() {
-        
+        view = addIncomePage
     }
 
     override func viewDidLoad() {
@@ -20,17 +27,79 @@ class AddingIncomeViewController: UIViewController {
         view.backgroundColor = .white
         
         title = "Adding Income"
+        
+        setupCurrentUser()
+    
+        // Add actions
+        addIncomePage.addIncomeButton.addTarget(self, action: #selector(saveIncome), for: .touchUpInside)
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    func setupCurrentUser() {
+        if let user = Auth.auth().currentUser {
+            self.currentUser = user
+        }
+        fetchUserRole(email: self.currentUser?.email ?? "")
     }
-    */
-
+    
+    func fetchUserRole(email: String) {
+       
+        // Fetching the user document by UID (UID is now the document ID)
+        database.collection("users2").document((self.currentUser?.uid)!).getDocument { (document, error) in
+            if let error = error {
+                print("Error getting document: \(error.localizedDescription)")
+                return
+            }
+            
+            if let document = document, document.exists {
+                let data = document.data()
+                let role = data?["role"] as? String ?? ""
+                
+                print("FetchUserRole: \(role)") // Check what role is fetched
+                
+                if role == "Kid" {
+                    self.SelectedUser = email
+                    print("Role is kid and email is: \(email)")
+                } else {
+                    
+                }
+            } else {
+                print("Document does not exist")
+            }
+        }
+    }
+    
+    @objc func saveIncome() {
+        if let name = addIncomePage.incomeNameTextField.text, let incomeAmount = addIncomePage.incomeTextField.text, let income = Double(incomeAmount), let addedBy = self.currentUser?.email, let selected = self.SelectedUser {
+            
+            
+            let budget = Budget(name: name, amount: income, date: Date(), image: "", addedBy: addedBy, for_user: selected)
+            
+            saveToFirebase(budget: budget)
+        }
+    }
+    
+    func saveToFirebase(budget: Budget) {
+        let db = Firestore.firestore()
+        
+        db.collection("budget").addDocument(data: [
+            "name": budget.name,
+            "amount": budget.amount,
+            "date": budget.date,
+            "image": budget.image,
+            "addedBy": budget.addedBy,
+            "for_user": budget.for_user
+        ]) { error in
+            if let error = error {
+                print("Error adding document: \(error)")
+            } else {
+                self.navigationController?.popViewController(animated: true)
+            }
+        }
+    }
+    
+    func showError(_ message: String) {
+        let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        present(alert, animated: true, completion: nil)
+    }
 }

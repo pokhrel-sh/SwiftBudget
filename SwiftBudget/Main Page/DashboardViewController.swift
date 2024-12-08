@@ -15,6 +15,7 @@ class DashboardViewController: UIViewController, UITableViewDataSource {
     var expenses: [Expense] = []
     var tableView: UITableView!
     var addExpenseButton: UIButton!
+    var overrideEmail: String?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -63,31 +64,53 @@ class DashboardViewController: UIViewController, UITableViewDataSource {
     // MARK: - Fetch Expenses from Firebase
     func fetchExpenses() {
         let db = Firestore.firestore()
-        
-        // Fetch current user's email
-        guard let currentUserEmail = Auth.auth().currentUser?.email else { return }
-        print(currentUserEmail)
-        
-        // Query Firebase for expenses added by the current user
-        db.collection("expenses")
-            .whereField("for_user", isEqualTo: currentUserEmail)
-            .getDocuments { snapshot, error in
-                if let error = error {
-                    print("Error fetching expenses: \(error)")
-                } else {
-                    self.expenses = snapshot?.documents.compactMap { document -> Expense? in
-                        let data = document.data()
-                        let name = data["name"] as? String ?? ""
-                        let price = data["price"] as? Double ?? 0
-                        let date = data["date"] as? String ?? ""
-                        let image = data["image"] as? String ?? ""
-                        let addedBy = data["addedBy"] as? String ?? ""
-                        return Expense(name: name, price: price, date: date, image: image, addedBy: addedBy, for_user: currentUserEmail)
-                    } ?? []
-                    
-                    self.tableView.reloadData()
+        if overrideEmail == nil {
+            // Fetch current user's email
+            guard let currentUserEmail = Auth.auth().currentUser?.email else { return }
+            print(currentUserEmail)
+            
+            // Query Firebase for expenses added by the current user
+            db.collection("expenses")
+                .whereField("for_user", isEqualTo: currentUserEmail)
+                .getDocuments { snapshot, error in
+                    if let error = error {
+                        print("Error fetching expenses: \(error)")
+                    } else {
+                        self.expenses = snapshot?.documents.compactMap { document -> Expense? in
+                            let data = document.data()
+                            let name = data["name"] as? String ?? ""
+                            let price = data["price"] as? Double ?? 0
+                            let date = data["date"] as? String ?? ""
+                            let image = data["image"] as? String ?? ""
+                            let addedBy = data["addedBy"] as? String ?? ""
+                            return Expense(name: name, price: price, date: Date(), image: image, addedBy: addedBy, for_user: currentUserEmail)
+                        } ?? []
+                        
+                        self.tableView.reloadData()
+                    }
                 }
-            }
+        } else {
+            // Query Firebase for expenses added by the current user
+            db.collection("expenses")
+                .whereField("for_user", isEqualTo: (self.overrideEmail)!)
+                .getDocuments { snapshot, error in
+                    if let error = error {
+                        print("Error fetching expenses: \(error)")
+                    } else {
+                        self.expenses = snapshot?.documents.compactMap { document -> Expense? in
+                            let data = document.data()
+                            let name = data["name"] as? String ?? ""
+                            let price = data["price"] as? Double ?? 0
+                            let date = data["date"] as? String ?? ""
+                            let image = data["image"] as? String ?? ""
+                            let addedBy = data["addedBy"] as? String ?? ""
+                            return Expense(name: name, price: price, date: Date(), image: image, addedBy: addedBy, for_user: (self.overrideEmail)!)
+                        } ?? []
+                        
+                        self.tableView.reloadData()
+                    }
+                }
+        }
     }
     
     // MARK: - TableView DataSource Methods
@@ -98,10 +121,10 @@ class DashboardViewController: UIViewController, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ExpenseCell", for: indexPath) as! ExpenseTableViewCell
         let expense = expenses[indexPath.row]
-        
+        let currDate = Date()
         cell.labelName.text = expense.name
         cell.labelPrice.text = "$\(expense.price)"
-        cell.labelDate.text = expense.date
+        cell.labelDate.text = "Date: \(currDate)"
         cell.labelAddedBy.text = "Added by: \(expense.addedBy)"
         // You can use the image URL for expense.image if required
         // e.g., load the image asynchronously using a library like SDWebImage

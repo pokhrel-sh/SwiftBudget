@@ -6,7 +6,7 @@
 //
 import UIKit
 
-class ViewController: UIViewController {
+class PersonalDashboard: UIView {
 
     //Below are the things that changes based on user informations
     var name: UILabel!
@@ -18,7 +18,7 @@ class ViewController: UIViewController {
     
     
     //Below are NON-MUTABLE elements
-    var summaryTitle: UILabel!
+    var viewTransactions: UIButton!
     var endDate: UILabel!
     var totalIncomeLabel: UILabel!
     var totalExpenseLabel: UILabel!
@@ -26,9 +26,9 @@ class ViewController: UIViewController {
     var addIncomeButton: UIButton!
     var addExpenseButton: UIButton!
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        view.backgroundColor = .white
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        self.backgroundColor = .white
         
         setupName()
         setupEmail()
@@ -49,7 +49,7 @@ class ViewController: UIViewController {
         name.textColor = .black
         name.font = UIFont.systemFont(ofSize: 18)
         name.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(name)
+        self.addSubview(name)
     }
     
     func setupEmail() {
@@ -58,17 +58,23 @@ class ViewController: UIViewController {
         email.textColor = .darkGray
         email.font = UIFont.systemFont(ofSize: 16)
         email.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(email)
+        self.addSubview(email)
     }
     
     func setupSummaryTitle() {
-        summaryTitle = UILabel()
-        summaryTitle.text = "Summary"
-        summaryTitle.textColor = .black
-        summaryTitle.font = UIFont.boldSystemFont(ofSize: 24)
-        summaryTitle.textAlignment = .center
-        summaryTitle.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(summaryTitle)
+        viewTransactions = UIButton()
+        viewTransactions.setTitle("", for: .normal)
+        viewTransactions.setImage(UIImage(systemName: "text.page.badge.magnifyingglass")?.withRenderingMode(.alwaysOriginal), for: .normal)
+        viewTransactions.contentHorizontalAlignment = .fill
+        viewTransactions.contentVerticalAlignment = .fill
+        viewTransactions.imageView?.contentMode = .scaleAspectFit
+        viewTransactions.layer.cornerRadius = 16
+        viewTransactions.imageView?.layer.shadowOffset = .zero
+        viewTransactions.imageView?.layer.shadowRadius = 0.8
+        viewTransactions.imageView?.layer.shadowOpacity = 0.7
+        viewTransactions.imageView?.clipsToBounds = true
+        viewTransactions.translatesAutoresizingMaskIntoConstraints = false
+        self.addSubview(viewTransactions)
     }
     
     func setupStartDate() {
@@ -77,7 +83,7 @@ class ViewController: UIViewController {
         startDate.textColor = .darkGray
         startDate.font = UIFont.systemFont(ofSize: 16)
         startDate.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(startDate)
+        self.addSubview(startDate)
     }
     
     func setupEndDate() {
@@ -86,7 +92,7 @@ class ViewController: UIViewController {
         endDate.textColor = .darkGray
         endDate.font = UIFont.systemFont(ofSize: 16)
         endDate.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(endDate)
+        self.addSubview(endDate)
     }
     
     func setupTotalIncome() {
@@ -95,14 +101,14 @@ class ViewController: UIViewController {
         totalIncomeLabel.textColor = .black
         totalIncomeLabel.font = UIFont.systemFont(ofSize: 18)
         totalIncomeLabel.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(totalIncomeLabel)
+        self.addSubview(totalIncomeLabel)
         
         totalIncomeValue = UILabel()
         totalIncomeValue.text = "$0.00"
         totalIncomeValue.textColor = .green
         totalIncomeValue.font = UIFont.boldSystemFont(ofSize: 18)
         totalIncomeValue.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(totalIncomeValue)
+        self.addSubview(totalIncomeValue)
     }
     
     func setupTotalExpense() {
@@ -111,14 +117,14 @@ class ViewController: UIViewController {
         totalExpenseLabel.textColor = .black
         totalExpenseLabel.font = UIFont.systemFont(ofSize: 18)
         totalExpenseLabel.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(totalExpenseLabel)
+        self.addSubview(totalExpenseLabel)
         
         totalExpenseValue = UILabel()
         totalExpenseValue.text = "$0.00"
         totalExpenseValue.textColor = .red
         totalExpenseValue.font = UIFont.boldSystemFont(ofSize: 18)
         totalExpenseValue.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(totalExpenseValue)
+        self.addSubview(totalExpenseValue)
     }
     
     func setupNetIncome() {
@@ -127,14 +133,14 @@ class ViewController: UIViewController {
         netIncomeLabel.textColor = .black
         netIncomeLabel.font = UIFont.systemFont(ofSize: 18)
         netIncomeLabel.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(netIncomeLabel)
+        self.addSubview(netIncomeLabel)
         
         netIncomeValue = UILabel()
         netIncomeValue.text = "$0.00"
         netIncomeValue.textColor = .blue
         netIncomeValue.font = UIFont.boldSystemFont(ofSize: 18)
         netIncomeValue.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(netIncomeValue)
+        self.addSubview(netIncomeValue)
     }
     
     func setupButtons() {
@@ -142,55 +148,61 @@ class ViewController: UIViewController {
         addIncomeButton.setTitle("Add Income", for: .normal)
         addIncomeButton.titleLabel?.font = UIFont.systemFont(ofSize: 18)
         addIncomeButton.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(addIncomeButton)
+        self.addSubview(addIncomeButton)
         
         addExpenseButton = UIButton(type: .system)
         addExpenseButton.setTitle("Add Expense", for: .normal)
         addExpenseButton.titleLabel?.font = UIFont.systemFont(ofSize: 18)
         addExpenseButton.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(addExpenseButton)
+        self.addSubview(addExpenseButton)
     }
     
     func initConstraints() {
         NSLayoutConstraint.activate([
-            name.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
-            name.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            name.topAnchor.constraint(equalTo: self.safeAreaLayoutGuide.topAnchor, constant: 20),
+            name.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 20),
             
             email.topAnchor.constraint(equalTo: name.bottomAnchor, constant: 10),
-            email.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            email.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 20),
             
-            summaryTitle.topAnchor.constraint(equalTo: email.bottomAnchor, constant: 20),
-            summaryTitle.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            viewTransactions.topAnchor.constraint(equalTo: email.bottomAnchor, constant: 20),
+            viewTransactions.centerXAnchor.constraint(equalTo: self.centerXAnchor),
+            viewTransactions.heightAnchor.constraint(equalToConstant: 100),
+            viewTransactions.widthAnchor.constraint(equalToConstant: 50),
             
-            startDate.topAnchor.constraint(equalTo: summaryTitle.bottomAnchor, constant: 20),
-            startDate.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            startDate.topAnchor.constraint(equalTo: viewTransactions.bottomAnchor, constant: 20),
+            startDate.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 20),
             
             endDate.topAnchor.constraint(equalTo: startDate.bottomAnchor, constant: 10),
-            endDate.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            endDate.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 20),
             
             totalIncomeLabel.topAnchor.constraint(equalTo: endDate.bottomAnchor, constant: 30),
-            totalIncomeLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            totalIncomeLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 20),
             
             totalIncomeValue.centerYAnchor.constraint(equalTo: totalIncomeLabel.centerYAnchor),
-            totalIncomeValue.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            totalIncomeValue.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -20),
             
             totalExpenseLabel.topAnchor.constraint(equalTo: totalIncomeLabel.bottomAnchor, constant: 20),
-            totalExpenseLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            totalExpenseLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 20),
             
             totalExpenseValue.centerYAnchor.constraint(equalTo: totalExpenseLabel.centerYAnchor),
-            totalExpenseValue.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            totalExpenseValue.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -20),
             
             netIncomeLabel.topAnchor.constraint(equalTo: totalExpenseLabel.bottomAnchor, constant: 20),
-            netIncomeLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            netIncomeLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 20),
             
             netIncomeValue.centerYAnchor.constraint(equalTo: netIncomeLabel.centerYAnchor),
-            netIncomeValue.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            netIncomeValue.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -20),
             
             addIncomeButton.topAnchor.constraint(equalTo: netIncomeLabel.bottomAnchor, constant: 40),
-            addIncomeButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 50),
+            addIncomeButton.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 50),
             
             addExpenseButton.topAnchor.constraint(equalTo: netIncomeLabel.bottomAnchor, constant: 40),
-            addExpenseButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -50),
+            addExpenseButton.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -50),
         ])
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }

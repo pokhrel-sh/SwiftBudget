@@ -119,7 +119,7 @@ class KidRegisterViewController: UIViewController {
 
 
     private func navigateToDashboard() {
-        let dashboardVC = DashboardViewController()
+        let dashboardVC = PersonalDashboardViewController()
         navigationController?.pushViewController(dashboardVC, animated: true)
     }
 

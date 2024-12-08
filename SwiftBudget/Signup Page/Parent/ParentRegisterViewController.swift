@@ -48,7 +48,9 @@ class ParentRegisterViewController: UIViewController {
                 self.showAlert("Failed to retrieve user ID.")
                 return
             }
-
+            
+            let dispatchGroup = DispatchGroup()
+            dispatchGroup.enter()
             self.db.collection("users2").document(uid).setData([
                 "name": name,
                 "email": email,
@@ -57,12 +59,12 @@ class ParentRegisterViewController: UIViewController {
                 if let error = error {
                     self.showAlert("Database error: \(error.localizedDescription)")
                 } else {
-                    self.showAlert("Parent registration successful!", action: {
-                        self.navigationController?.pushViewController(DashboardViewController(), animated: true)
-                    })
+                    dispatchGroup.leave()
+
                 }
             }
             
+            dispatchGroup.enter()
             self.db.collection("familyCircle").document(uid).setData([
                 "name": name,
                 "email": email,
@@ -71,10 +73,16 @@ class ParentRegisterViewController: UIViewController {
                 if let error = error {
                     self.showAlert("Database error: \(error.localizedDescription)")
                 } else {
-                    self.showAlert("Parent registration successful!", action: {
-                        self.navigationController?.pushViewController(DashboardViewController(), animated: true)
-                    })
+                    dispatchGroup.leave()
+
                 }
+            }
+            
+            dispatchGroup.notify(queue: .main) {
+                self.showAlert("Parent registration successful!", action: {
+                    //self.navigationController?.pushViewController(DashboardViewController(), animated: true)
+                    self.navigationController?.popViewController(animated: true)
+                })
             }
         }
     }

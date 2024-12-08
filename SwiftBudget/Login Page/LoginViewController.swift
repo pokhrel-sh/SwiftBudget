@@ -59,12 +59,33 @@ class LoginViewController: UIViewController {
                         print("Error fetching user details: \(error.localizedDescription)")
                         self.showAlert(title: "Error", message: "Failed to fetch user details.")
                     } else if let snapshot = snapshot, snapshot.exists {
+                        
+                        
+                        if let data = snapshot.data() {
+                            // Access a specific field
+                            if let role = data["role"] as? String, let name = data["name"] as? String, let email = data["email"] as? String{
+                                if role == "Parent" {
+                                    let ParentDashboard = ParentDashboardViewController()
+                                    self.navigationController?.pushViewController(ParentDashboard, animated: true)
+                                } else {
+                                    let personalDashboard = PersonalDashboardViewController()
+                                    personalDashboard.name = name
+                                    personalDashboard.email = email
+                                    self.navigationController?.pushViewController(personalDashboard, animated: true)
+                                }
+                            } else {
+                                print("Role not found")
+                            }
+                        }
+                        
                         // Successfully fetched user details
                         print("User details: \(snapshot.data() ?? [:])")
-                        let dashboardVC = DashboardViewController()
-                        NotificationCenter.default.post(name: NSNotification.Name("LoginSuccessful"), object: nil)
-                        self.navigationController?.pushViewController(dashboardVC, animated: true)
+                        
                         print("User logged in successfully.")
+                        
+                        
+                        
+                        
                     } else {
                         self.showAlert(title: "Error", message: "User details not found in Firestore.")
                     }
