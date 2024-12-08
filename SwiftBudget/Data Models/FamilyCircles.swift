@@ -15,7 +15,7 @@ struct User {
 
 enum Role: String {
     case parent = "parent"
-    case student = "student" // From dependent
+    case student = "student"
 }
 
 struct FamilyCircle {
@@ -23,3 +23,13 @@ struct FamilyCircle {
     var parentId: String
     var studentIds: [String]
 }
+
+struct Expense {
+    var name: String
+    var price: Double
+    var date: String
+    var image: String // URL or local image path
+    var addedBy: String
+    var for_user: String
+}
+

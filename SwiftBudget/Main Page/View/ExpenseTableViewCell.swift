@@ -6,23 +6,24 @@
 //
 
 import UIKit
-
 class ExpenseTableViewCell: UITableViewCell {
-
+    
     var wrapperCellView: UIView!
-    var labelType: UILabel!
     var labelName: UILabel!
-    var labelDate: UILabel!
     var labelPrice: UILabel!
+    var labelDate: UILabel!
+    var labelAddedBy: UILabel!
+    var expenseImageView: UIImageView!  // Added image view
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?){
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
         setupWrapperCellView()
-        setupLabelType()
         setupLabelName()
-        setupLabelDate()
         setupLabelPrice()
+        setupLabelDate()
+        setupLabelAddedBy()
+        setupExpenseImageView()  // Setup image view
         
         initConstraints()
     }
@@ -30,11 +31,9 @@ class ExpenseTableViewCell: UITableViewCell {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    func setupWrapperCellView(){
-        wrapperCellView = UITableViewCell()
-        
-        //working with the shadows and colors...
+
+    func setupWrapperCellView() {
+        wrapperCellView = UIView()
         wrapperCellView.backgroundColor = .white
         wrapperCellView.layer.cornerRadius = 6.0
         wrapperCellView.layer.shadowColor = UIColor.gray.cgColor
@@ -44,72 +43,67 @@ class ExpenseTableViewCell: UITableViewCell {
         wrapperCellView.translatesAutoresizingMaskIntoConstraints = false
         self.addSubview(wrapperCellView)
     }
-    
-    func setupLabelType(){
-        labelType = UILabel()
-        labelType.font = UIFont.boldSystemFont(ofSize: 20)
-        labelType.translatesAutoresizingMaskIntoConstraints = false
-        wrapperCellView.addSubview(labelType)
-    }
-    
-    func setupLabelName(){
+
+    func setupLabelName() {
         labelName = UILabel()
         labelName.font = UIFont.boldSystemFont(ofSize: 20)
         labelName.translatesAutoresizingMaskIntoConstraints = false
         wrapperCellView.addSubview(labelName)
     }
-    
-    func setupLabelDate(){
-        labelDate = UILabel()
-        labelDate.font = UIFont.boldSystemFont(ofSize: 14)
-        labelDate.translatesAutoresizingMaskIntoConstraints = false
-        wrapperCellView.addSubview(labelDate)
-    }
-    
-    func setupLabelPrice(){
+
+    func setupLabelPrice() {
         labelPrice = UILabel()
-        labelPrice.font = UIFont.boldSystemFont(ofSize: 14)
+        labelPrice.font = UIFont.boldSystemFont(ofSize: 16)
         labelPrice.translatesAutoresizingMaskIntoConstraints = false
         wrapperCellView.addSubview(labelPrice)
     }
-    
-    func initConstraints(){
+
+    func setupLabelDate() {
+        labelDate = UILabel()
+        labelDate.font = UIFont.systemFont(ofSize: 14)
+        labelDate.translatesAutoresizingMaskIntoConstraints = false
+        wrapperCellView.addSubview(labelDate)
+    }
+
+    func setupLabelAddedBy() {
+        labelAddedBy = UILabel()
+        labelAddedBy.font = UIFont.italicSystemFont(ofSize: 14)
+        labelAddedBy.translatesAutoresizingMaskIntoConstraints = false
+        wrapperCellView.addSubview(labelAddedBy)
+    }
+
+    func setupExpenseImageView() {
+        expenseImageView = UIImageView()
+        expenseImageView.contentMode = .scaleAspectFit
+        expenseImageView.translatesAutoresizingMaskIntoConstraints = false
+        wrapperCellView.addSubview(expenseImageView)
+    }
+
+    func initConstraints() {
         NSLayoutConstraint.activate([
-            wrapperCellView.topAnchor.constraint(equalTo: self.topAnchor,constant: 10),
+            wrapperCellView.topAnchor.constraint(equalTo: self.topAnchor, constant: 10),
             wrapperCellView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 10),
             wrapperCellView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -10),
             wrapperCellView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -10),
             
-            //Add LabelType
-            
             labelName.topAnchor.constraint(equalTo: wrapperCellView.topAnchor, constant: 8),
             labelName.leadingAnchor.constraint(equalTo: wrapperCellView.leadingAnchor, constant: 16),
-            labelName.heightAnchor.constraint(equalToConstant: 20),
-            labelName.widthAnchor.constraint(lessThanOrEqualTo: wrapperCellView.widthAnchor),
             
-            labelDate.topAnchor.constraint(equalTo: labelName.bottomAnchor, constant: 2),
+            labelPrice.topAnchor.constraint(equalTo: labelName.bottomAnchor, constant: 8),
+            labelPrice.leadingAnchor.constraint(equalTo: labelName.leadingAnchor),
+            
+            labelDate.topAnchor.constraint(equalTo: labelPrice.bottomAnchor, constant: 8),
             labelDate.leadingAnchor.constraint(equalTo: labelName.leadingAnchor),
-            labelDate.heightAnchor.constraint(equalToConstant: 16),
-            labelDate.widthAnchor.constraint(lessThanOrEqualTo: labelName.widthAnchor),
             
-            labelPrice.topAnchor.constraint(equalTo: labelDate.bottomAnchor, constant: 2),
-            labelPrice.leadingAnchor.constraint(equalTo: labelDate.leadingAnchor),
-            labelPrice.heightAnchor.constraint(equalToConstant: 16),
-            labelPrice.widthAnchor.constraint(lessThanOrEqualTo: labelName.widthAnchor),
+            labelAddedBy.topAnchor.constraint(equalTo: labelDate.bottomAnchor, constant: 8),
+            labelAddedBy.leadingAnchor.constraint(equalTo: labelName.leadingAnchor),
             
-            wrapperCellView.heightAnchor.constraint(equalToConstant: 72)
+            expenseImageView.topAnchor.constraint(equalTo: wrapperCellView.topAnchor, constant: 8),
+            expenseImageView.trailingAnchor.constraint(equalTo: wrapperCellView.trailingAnchor, constant: -16),
+            expenseImageView.widthAnchor.constraint(equalToConstant: 50),
+            expenseImageView.heightAnchor.constraint(equalToConstant: 50),
+            
+            wrapperCellView.heightAnchor.constraint(equalToConstant: 120)
         ])
     }
-
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        // Initialization code
-    }
-
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
-    }
-
 }

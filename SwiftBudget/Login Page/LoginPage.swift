@@ -95,6 +95,7 @@ class LoginPage: UIView {
             emailField.leadingAnchor.constraint(equalTo: loginLabel.leadingAnchor),
             emailField.trailingAnchor.constraint(equalTo: loginLabel.trailingAnchor),
             emailField.widthAnchor.constraint(equalToConstant: 200),
+            
             // Password Field Constraints
             passwordField.topAnchor.constraint(equalTo: emailField.bottomAnchor, constant: fieldSpacing),
             passwordField.leadingAnchor.constraint(equalTo: emailField.leadingAnchor),

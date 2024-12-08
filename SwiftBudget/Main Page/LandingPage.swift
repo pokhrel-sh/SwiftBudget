@@ -18,6 +18,8 @@ class LandingPage: UIView {
     var parentButton: UIButton!
     var dependantButton: UIButton!
     var studentButton: UIButton!
+    var loginLabel: UILabel!
+    var loginButton: UIButton!
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -28,8 +30,10 @@ class LandingPage: UIView {
         setupFamilyLabel()
         setupParentsButton()
         setupDependantButton()
-        setupIndependantLabel()
+        setupindependentLabel()
         setupStudentButton()
+        setupLoginLabel()
+        setupLoginButton()
         
         // MARK: Initializing the constraints
         initConstraints()
@@ -41,7 +45,7 @@ class LandingPage: UIView {
     
     func setupLabelAppName() {
         titleLabel = UILabel()
-        titleLabel.text = "SwiftBudget"
+        titleLabel.text = "Welcome to Swift Budget"
         titleLabel.font = UIFont.boldSystemFont(ofSize: 24)
         titleLabel.textAlignment = .center
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -56,7 +60,7 @@ class LandingPage: UIView {
         self.addSubview(familyLabel)
     }
     
-    func setupIndependantLabel() {
+    func setupindependentLabel() {
         independantLabel = UILabel()
         independantLabel.text = "Independant"
         independantLabel.font = UIFont.systemFont(ofSize: 18)
@@ -85,6 +89,21 @@ class LandingPage: UIView {
         self.addSubview(studentButton)
     }
     
+    func setupLoginLabel() {
+        loginLabel = UILabel()
+        loginLabel.text = "Already a member? Login Here!"
+        loginLabel.font = UIFont.systemFont(ofSize: 18)
+        loginLabel.translatesAutoresizingMaskIntoConstraints = false
+        self.addSubview(loginLabel)
+    }
+    
+    func setupLoginButton() {
+        loginButton = UIButton(type: .system)
+        loginButton.setTitle("Login", for: .normal)
+        loginButton.translatesAutoresizingMaskIntoConstraints = false
+        self.addSubview(loginButton)
+    }
+    
     func initConstraints() {
         let sizeableGap: CGFloat = 40
         
@@ -111,7 +130,14 @@ class LandingPage: UIView {
             
             // Student Button Constraints
             studentButton.topAnchor.constraint(equalTo: independantLabel.bottomAnchor, constant: 16),
-            studentButton.centerXAnchor.constraint(equalTo: self.centerXAnchor)
+            studentButton.centerXAnchor.constraint(equalTo: self.centerXAnchor),
+            
+            loginLabel.topAnchor.constraint(equalTo: studentButton.bottomAnchor, constant: sizeableGap),
+            loginLabel.centerXAnchor.constraint(equalTo: self.centerXAnchor),
+            
+            loginButton.topAnchor.constraint(equalTo: loginLabel.bottomAnchor, constant: 16),
+            loginButton.centerXAnchor.constraint(equalTo: self.centerXAnchor)
+
         ])
     }
 }
