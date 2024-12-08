@@ -2,17 +2,18 @@ import UIKit
 
 class AddingExpense: UIView {
     
-    
     var nameTextField: UITextField!
     var priceTextField: UITextField!
     var dateTextField: UITextField!
     var addedByTextField: UITextField!
     var selectChildTextField: UITextField!
     var saveButton: UIButton!
+    var buttonTakePhoto: UIButton!
     
     // Initialization
     override init(frame: CGRect) {
         super.init(frame: frame)
+        self.backgroundColor = .white
         
         setupNameField()
         setupPriceField()
@@ -20,6 +21,7 @@ class AddingExpense: UIView {
         setupAddedByField()
         setupSelectChildField()
         setupSaveButton()
+        setupButtonTakePhoto()
         
         initConstraints()
     }
@@ -77,46 +79,60 @@ class AddingExpense: UIView {
         self.addSubview(saveButton)
     }
     
-
+    func setupButtonTakePhoto() {
+        buttonTakePhoto = UIButton(type: .system)
+        buttonTakePhoto.setTitle("Take Photo", for: .normal)
+        buttonTakePhoto.setImage(UIImage(systemName: "camera.fill"), for: .normal)
+        buttonTakePhoto.titleEdgeInsets = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 0)
+        buttonTakePhoto.contentHorizontalAlignment = .center
+        buttonTakePhoto.contentVerticalAlignment = .center
+        buttonTakePhoto.imageView?.contentMode = .scaleAspectFit
+        buttonTakePhoto.translatesAutoresizingMaskIntoConstraints = false
+        self.addSubview(buttonTakePhoto)
+    }
+    
     required init?(coder: NSCoder) {
         super.init(coder: coder)
     }
     
     func initConstraints() {
-        
-        // Layout
         NSLayoutConstraint.activate([
             // Name TextField
-            nameTextField.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 20),
-            nameTextField.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
-            nameTextField.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
+            nameTextField.topAnchor.constraint(equalTo: self.safeAreaLayoutGuide.topAnchor, constant: 20),
+            nameTextField.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 20),
+            nameTextField.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -20),
             
             // Price TextField
             priceTextField.topAnchor.constraint(equalTo: nameTextField.bottomAnchor, constant: 20),
-            priceTextField.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
-            priceTextField.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
+            priceTextField.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 20),
+            priceTextField.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -20),
             
             // Date TextField
             dateTextField.topAnchor.constraint(equalTo: priceTextField.bottomAnchor, constant: 20),
-            dateTextField.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
-            dateTextField.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
+            dateTextField.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 20),
+            dateTextField.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -20),
             
             // Added By TextField
             addedByTextField.topAnchor.constraint(equalTo: dateTextField.bottomAnchor, constant: 20),
-            addedByTextField.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
-            addedByTextField.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
+            addedByTextField.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 20),
+            addedByTextField.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -20),
+            
+            // Take Photo Button
+            buttonTakePhoto.topAnchor.constraint(equalTo: addedByTextField.bottomAnchor, constant: 20),
+            buttonTakePhoto.centerXAnchor.constraint(equalTo: self.centerXAnchor),
+            buttonTakePhoto.widthAnchor.constraint(equalToConstant: 150),
+            buttonTakePhoto.heightAnchor.constraint(equalToConstant: 50),
             
             // Select Child TextField
-            selectChildTextField.topAnchor.constraint(equalTo: addedByTextField.bottomAnchor, constant: 20),
-            selectChildTextField.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
-            selectChildTextField.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
+            selectChildTextField.topAnchor.constraint(equalTo: buttonTakePhoto.bottomAnchor, constant: 20),
+            selectChildTextField.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 20),
+            selectChildTextField.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -20),
             
             // Save Button
             saveButton.topAnchor.constraint(equalTo: selectChildTextField.bottomAnchor, constant: 30),
-            saveButton.centerXAnchor.constraint(equalTo: centerXAnchor),
+            saveButton.centerXAnchor.constraint(equalTo: self.centerXAnchor),
             saveButton.widthAnchor.constraint(equalToConstant: 150),
             saveButton.heightAnchor.constraint(equalToConstant: 50),
         ])
     }
 }
-

@@ -1,11 +1,3 @@
-//
-//  ViewController.swift
-//
-//  Adding budget income
-//
-//  Created by Shishir Pokhrel on 12/4/24.
-//
-
 import UIKit
 
 class AddingIncome: UIView {
@@ -19,7 +11,7 @@ class AddingIncome: UIView {
     var incomeDescriptionTextField: UITextField!
     var addIncomeButton: UIButton!
     var backButton: UIButton!
-    
+    var cameraButton: UIButton! // New camera button
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -34,6 +26,9 @@ class AddingIncome: UIView {
         setupIncomeDescriptionTextField()
         setupAddIncomeButton()
         setupBackButton()
+        setupCameraButton() // Setting up the camera button
+        
+        initConstraints()
     }
     
     required init?(coder: NSCoder) {
@@ -61,7 +56,7 @@ class AddingIncome: UIView {
         incomeTextField = UITextField()
         incomeTextField.placeholder = "Enter Income Amount"
         incomeTextField.borderStyle = .roundedRect
-        incomeTextField.keyboardType = .numberPad 
+        incomeTextField.keyboardType = .numberPad
         incomeTextField.translatesAutoresizingMaskIntoConstraints = false
         self.addSubview(incomeTextField)
     }
@@ -98,12 +93,12 @@ class AddingIncome: UIView {
         self.addSubview(incomeDescriptionTextField)
     }
     
-   func setupAddIncomeButton() {
+    func setupAddIncomeButton() {
         addIncomeButton = UIButton(type: .system)
         addIncomeButton.setTitle("Add Income", for: .normal)
         addIncomeButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 18)
         addIncomeButton.translatesAutoresizingMaskIntoConstraints = false
-       self.addSubview(addIncomeButton)
+        self.addSubview(addIncomeButton)
     }
     
     func setupBackButton() {
@@ -112,6 +107,26 @@ class AddingIncome: UIView {
         backButton.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
         backButton.translatesAutoresizingMaskIntoConstraints = false
         self.addSubview(backButton)
+    }
+    
+    func setupCameraButton() {
+        cameraButton = UIButton(type: .system)
+        cameraButton.setTitle("Take Photo", for: .normal)
+        cameraButton.setImage(UIImage(systemName: "camera.fill"), for: .normal)
+        cameraButton.titleEdgeInsets = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 0)
+        cameraButton.contentHorizontalAlignment = .center
+        cameraButton.contentVerticalAlignment = .center
+        cameraButton.imageView?.contentMode = .scaleAspectFit
+        cameraButton.translatesAutoresizingMaskIntoConstraints = false
+        self.addSubview(cameraButton)
+        
+        // Add tap action to the camera button
+        cameraButton.addTarget(self, action: #selector(cameraButtonTapped), for: .touchUpInside)
+    }
+    
+    @objc func cameraButtonTapped() {
+        // Placeholder for camera functionality
+        print("Camera button tapped")
     }
     
     func initConstraints() {
@@ -156,7 +171,13 @@ class AddingIncome: UIView {
             
             // Back Button
             backButton.centerYAnchor.constraint(equalTo: incomeTitle.centerYAnchor),
-            backButton.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 20)
+            backButton.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 20),
+            
+            // Camera Button
+            cameraButton.topAnchor.constraint(equalTo: addIncomeButton.bottomAnchor, constant: 20),
+            cameraButton.centerXAnchor.constraint(equalTo: self.centerXAnchor),
+            cameraButton.widthAnchor.constraint(equalToConstant: 150),
+            cameraButton.heightAnchor.constraint(equalToConstant: 50)
         ])
     }
 }
