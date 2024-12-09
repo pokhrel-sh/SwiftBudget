@@ -1,11 +1,3 @@
-//
-//  DashboardViewController.swift
-//  SwiftBudget
-//
-//  Created by Akshay Tolani on 12/7/24.
-//
-
-
 import UIKit
 import Firebase
 import FirebaseAuth
@@ -40,26 +32,36 @@ class DashboardViewController: UIViewController, UITableViewDataSource {
     
     func fetchExpenses(email: String) {
         let db = Firestore.firestore()
-        // Query Firebase for transactions added by the current user
+
+        let currentUserEmail = overrideEmail ?? Auth.auth().currentUser?.email
+        
+        guard let email = currentUserEmail else { return }
+        
         db.collection("transactions")
             .whereField("for_user", isEqualTo: email)
             .getDocuments { snapshot, error in
                 if let error = error {
-                    print("Error fetching transactions: \(error)")
-                } else {
-                    self.transactions = snapshot?.documents.compactMap { document -> Transaction? in
-                        let data = document.data()
-                        let type = data["type"] as? String ?? ""
-                        let name = data["name"] as? String ?? ""
-                        let price = data["amount"] as? Double ?? 0
-                        let desc = data["desc"] as? String ?? "N/A"
-                        let date = Date()
-                        let image = data["image"] as? String ?? ""
-                        let addedBy = data["addedBy"] as? String ?? ""
-                        return Transaction(type: type,name: name, amount: price, desc: desc, date: Date(), image: image, addedBy: addedBy, for_user: email)
-                    } ?? []
-                    
-                     self.dashboardView.tableView.reloadData()
+                    print("Error fetching expenses: \(error)")
+                    return
+                }
+                
+                self.transactions = snapshot?.documents.compactMap { document -> Expense? in
+                    let data = document.data()
+                    return Transaction(
+                        type = data["type"] as? String ?? ""
+                        name = data["name"] as? String ?? ""
+                        price = data["amount"] as? Double ?? 0
+                        desc = data["desc"] as? String ?? "N/A"
+                        date = Date()
+                        image = data["image"] as? String ?? ""
+                        addedBy = data["addedBy"] as? String ?? ""
+                        for_user = data["for_user"] as? String ?? ""
+                    )
+                } ?? []
+                
+                DispatchQueue.main.async {
+                    //self.tableView.reloadData()
+                  self.dashboardView.tableView.reloadData()
                 }
             }
     }
@@ -78,6 +80,11 @@ class DashboardViewController: UIViewController, UITableViewDataSource {
         cell.labelPrice.text = "$\(expense.amount)"
         cell.labelDate.text = "Date: \(currDate)"
         cell.labelAddedBy.text = "Added by: \(expense.addedBy)"
+        if let imageUrl = URL(string: expense.image), !expense.image.isEmpty {
+                cell.expenseImageView.loadRemoteImage(from: imageUrl)
+            } else {
+                cell.expenseImageView.image = UIImage(systemName: "photo") // Placeholder image
+            }
         // You can use the image URL for expense.image if required
         // e.g., load the image asynchronously using a library like SDWebImage
         
