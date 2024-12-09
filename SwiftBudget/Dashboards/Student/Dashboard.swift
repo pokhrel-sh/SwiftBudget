@@ -63,7 +63,6 @@ class PersonalDashboard: UIView {
     
     func setupSummaryTitle() {
         viewTransactions = UIButton()
-        viewTransactions.setTitle("", for: .normal)
         viewTransactions.setImage(UIImage(systemName: "text.page.badge.magnifyingglass")?.withRenderingMode(.alwaysOriginal), for: .normal)
         viewTransactions.contentHorizontalAlignment = .fill
         viewTransactions.contentVerticalAlignment = .fill

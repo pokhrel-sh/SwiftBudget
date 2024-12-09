@@ -22,7 +22,7 @@ class StudentSignupViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
-        
+        title = "Signup as an independent"
         studentView.registerButton.addTarget(self, action: #selector(registerStudent), for: .touchUpInside)
     }
 
@@ -56,8 +56,7 @@ class StudentSignupViewController: UIViewController {
                     self.showAlert("Database error: \(error.localizedDescription)")
                 } else {
                     self.showAlert("Registration successful!", action: {
-                        let dashboard = PersonalDashboardViewController()
-                        self.navigationController?.pushViewController(dashboard, animated: true)
+                        self.navigationController?.popViewController(animated: true)
                     })
                 }
             }

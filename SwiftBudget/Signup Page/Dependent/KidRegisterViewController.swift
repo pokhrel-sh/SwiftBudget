@@ -119,8 +119,7 @@ class KidRegisterViewController: UIViewController {
 
 
     private func navigateToDashboard() {
-        let dashboardVC = PersonalDashboardViewController()
-        navigationController?.pushViewController(dashboardVC, animated: true)
+        self.navigationController?.popViewController(animated: true)
     }
 
     private func showAlert(_ message: String, action: (() -> Void)? = nil) {

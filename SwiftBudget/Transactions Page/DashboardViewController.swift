@@ -33,10 +33,10 @@ class DashboardViewController: UIViewController, UITableViewDataSource {
     // Do it by date
     func fetchExpenses(email: String) {
         let db = Firestore.firestore()
-
+        
         db.collection("transactions")
-        .whereField("for_user", isEqualTo: email)
-        .getDocuments { snapshot, error in
+            .whereField("for_user", isEqualTo: email)
+            .getDocuments { snapshot, error in
             if let error = error {
                 print("Error fetching transactions: \(error)")
             } else {
@@ -46,11 +46,11 @@ class DashboardViewController: UIViewController, UITableViewDataSource {
                     let name = data["name"] as? String ?? ""
                     let price = data["amount"] as? Double ?? 0
                     let desc = data["desc"] as? String ?? "N/A"
-                    let date = Date()
+                    let date = (data["date"] as? Timestamp)?.dateValue() ?? Date()
                     let image = data["image"] as? String ?? ""
                     let addedBy = data["addedBy"] as? String ?? ""
                     return Transaction(type: type,name: name, amount: price, desc: desc, date: date, image: image, addedBy: addedBy, for_user: email)
-                } ?? []
+                }.sorted { $0.date > $1.date } ?? []
                 
                  self.dashboardView.tableView.reloadData()
             }

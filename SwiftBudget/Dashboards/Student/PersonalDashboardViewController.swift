@@ -54,9 +54,6 @@ class PersonalDashboardViewController: UIViewController {
                                     let date = timestamp.dateValue()
                                     if self.startDate > date {
                                         self.startDate = date
-                                        print("DATE: ")
-                                        print(self.startDate)
-                                        print(date)
                                     }
                                 }
                                  

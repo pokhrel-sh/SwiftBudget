@@ -30,7 +30,7 @@ class DashboardView: UIView {
     
     func setupDashboardLabel() {
         dashboardTitle = UILabel()
-        dashboardTitle.text = "Income and Expenses"
+        dashboardTitle.text = "Transaction history"
         dashboardTitle.font = UIFont.systemFont(ofSize: 16)
         dashboardTitle.translatesAutoresizingMaskIntoConstraints = false
         self.addSubview(dashboardTitle)

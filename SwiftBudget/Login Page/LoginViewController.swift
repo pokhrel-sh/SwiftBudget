@@ -38,7 +38,6 @@ class LoginViewController: UIViewController {
     @objc func onSigninTapped() {
         guard let email = loginScreen.emailField.text, !email.isEmpty,
               let password = loginScreen.passwordField.text, !password.isEmpty else {
-            // Show alert for empty fields
             showAlert(title: "Error", message: "Please enter email and password.")
             return
         }
@@ -61,7 +60,6 @@ class LoginViewController: UIViewController {
                         
                         
                         if let data = snapshot.data() {
-                            // Access a specific field
                             if let role = data["role"] as? String, let name = data["name"] as? String, let email = data["email"] as? String{
                                 if role == "Parent" {
                                     let ParentDashboard = ParentDashboardViewController()
