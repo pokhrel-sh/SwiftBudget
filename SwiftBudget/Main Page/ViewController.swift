@@ -24,11 +24,6 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "Welcome"
-        
-        //Assigns each button with a number used to assign the users role when signing up
-        //These roles determine what screen the user sees after logging in
-        landingPage.parentButton.tag = 1
         
         landingPage.dependantButton.addTarget(self, action: #selector(navigateToDependentSignup), for: .touchUpInside)
         landingPage.parentButton.addTarget(self, action: #selector(navigateToParentSignup), for: .touchUpInside)
@@ -57,7 +52,6 @@ class ViewController: UIViewController {
         do{
             try Auth.auth().signOut()
             print("User Logged Out")
-            self.setupRightBarButton(isLoggedin: false)
         }catch{
             print("Error occured!")
         }
@@ -65,6 +59,4 @@ class ViewController: UIViewController {
         let loginVC = LoginViewController()
         navigationController?.pushViewController(loginVC, animated: true)
     }
-    
-    
 }

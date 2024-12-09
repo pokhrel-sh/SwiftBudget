@@ -37,47 +37,49 @@ class PersonalDashboardViewController: UIViewController {
                 
                 self.setupRightBarButton(isLoggedin: true)
                 
-                self.listenToTransaction()
- 
-            }
-        }
-    }
-    
-    func listenToTransaction() {
-        self.database.collection("transactions")
-            .whereField("for_user", isEqualTo: (self.currentUser?.email)!)
-            .addSnapshotListener(includeMetadataChanges: false) { querySnapshot, error in
-                if let error = error {
-                    print("Error fetching expenses: \(error.localizedDescription)")
-                    return
-                }
-                
-                if let documents = querySnapshot?.documents {
-                    self.totalExpense = 0.0
-                    self.totalIncome = 0.0
-                    for document in documents {
-                        if let type = document.data()["type"] as? String,
-                            let amount = document.data()["amount"] as? Double,
-                            let date = document.data()["date"] as? Date {
-                            if type == "expense" {
-                                self.totalExpense += amount
-                            } else {
-                                self.totalIncome += amount
+                self.database.collection("transactions")
+                    .whereField("for_user", isEqualTo: (self.currentUser?.email)!)
+                    .addSnapshotListener(includeMetadataChanges: false) { querySnapshot, error in
+                        if let error = error {
+                            print("Error fetching expenses: \(error.localizedDescription)")
+                            return
+                        }
+                        
+                        if let documents = querySnapshot?.documents {
+                            self.totalExpense = 0.0
+                            self.totalIncome = 0.0
+                            for document in documents {
+                                
+                                if let timestamp = document.data()["date"] as? Timestamp {
+                                    let date = timestamp.dateValue()
+                                    if self.startDate > date {
+                                        self.startDate = date
+                                        print("DATE: ")
+                                        print(self.startDate)
+                                        print(date)
+                                    }
+                                }
+                                 
+                                if let type = document.data()["type"] as? String,
+                                   let amount = document.data()["amount"] as? Double {
+                                    if type == "expense" {
+                                        self.totalExpense += amount
+                                    } else {
+                                        self.totalIncome += amount
+                                    }
+                                }
                             }
-                            if self.startDate > date {
-                                self.startDate = date
+                                
+                            DispatchQueue.main.async {
+                                self.dashboard.totalExpenseValue.text = "$\(self.totalExpense)"
+                                self.dashboard.totalIncomeValue.text = "$\(self.totalIncome)"
+                                self.dashboard.netIncomeValue.text = "$\(self.totalIncome - self.totalExpense)"
+                                self.dashboard.startDate.text = "Start Date: \(self.startDate.formatted(date: .numeric, time: .omitted))"
                             }
                         }
                     }
-                    
-                    DispatchQueue.main.async {
-                        self.dashboard.totalExpenseValue.text = "$\(self.totalExpense)"
-                        self.dashboard.totalIncomeValue.text = "$\(self.totalIncome)"
-                        self.dashboard.netIncomeValue.text = "$\(self.totalIncome - self.totalExpense)"
-                        self.dashboard.startDate.text = "Start Date: \(self.startDate)"
-                    }
-                }
             }
+        }
     }
         
     override func viewDidLoad() {

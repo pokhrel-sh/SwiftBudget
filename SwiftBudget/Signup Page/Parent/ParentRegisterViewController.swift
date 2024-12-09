@@ -80,7 +80,6 @@ class ParentRegisterViewController: UIViewController {
             
             dispatchGroup.notify(queue: .main) {
                 self.showAlert("Parent registration successful!", action: {
-                    //self.navigationController?.pushViewController(DashboardViewController(), animated: true)
                     self.navigationController?.popViewController(animated: true)
                 })
             }
