@@ -13,53 +13,24 @@ import FirebaseAuth
 class DashboardViewController: UIViewController, UITableViewDataSource {
     
     var expenses: [Expense] = []
-    var tableView: UITableView!
-    var addExpenseButton: UIButton!
+    var dashboardView = DashboardView()
+    
     var overrideEmail: String?
+    
+
+    override func loadView() {
+        view = dashboardView
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        fetchExpenses()
         
-        setupUI()
-        loadTransactions()
+        dashboardView.tableView.register(ExpenseTableViewCell.self, forCellReuseIdentifier: "ExpenseCell")
+        dashboardView.tableView.dataSource = self
     }
     
-    // MARK: - Setup UI Elements
-    func setupUI() {
-        self.view.backgroundColor = .white
-        
-        // Setup Add Expense Button
-        addExpenseButton = UIButton(type: .system)
-        addExpenseButton.setTitle("Do Not Press", for: .normal)
-        addExpenseButton.titleLabel?.font = .boldSystemFont(ofSize: 16)
-        addExpenseButton.translatesAutoresizingMaskIntoConstraints = false
-        addExpenseButton.addTarget(self, action: #selector(addExpenseTapped), for: .touchUpInside)
-        self.view.addSubview(addExpenseButton)
-        
-        // Setup TableView for Expenses
-        tableView = UITableView()
-        tableView.register(ExpenseTableViewCell.self, forCellReuseIdentifier: "ExpenseCell")
-        tableView.dataSource = self
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        self.view.addSubview(tableView)
-        
-        // Set up constraints
-        setupConstraints()
-    }
-    
-    func setupConstraints() {
-        NSLayoutConstraint.activate([
-            // Add Expense Button
-            addExpenseButton.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor, constant: 10),
-            addExpenseButton.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
-            
-            // TableView for Expenses
-            tableView.topAnchor.constraint(equalTo: addExpenseButton.bottomAnchor, constant: 20),
-            tableView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 16),
-            tableView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -16),
-            tableView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: -16),
-        ])
-    }
+
     
    
     // MARK: - Loading and fethcing transactions
@@ -71,8 +42,6 @@ class DashboardViewController: UIViewController, UITableViewDataSource {
     }
     func fetchExpenses(email: String) {
         let db = Firestore.firestore()
-        
-        
         // Query Firebase for expenses added by the current user
         db.collection("expenses")
             .whereField("for_user", isEqualTo: email)
@@ -90,7 +59,7 @@ class DashboardViewController: UIViewController, UITableViewDataSource {
                         return Expense(name: name, price: price, date: Date(), image: image, addedBy: addedBy, for_user: email)
                     } ?? []
                     
-                    self.tableView.reloadData()
+                     self.dashboardView.tableView.reloadData()
                 }
             }
     }
