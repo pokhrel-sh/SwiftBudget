@@ -105,13 +105,11 @@ class PersonalDashboardViewController: UIViewController {
     
     @objc func addIncomeTapped() {
         let incomePage = AddingIncomeViewController()
-        incomePage.role = role
         navigationController?.pushViewController(incomePage, animated: true)
     }
     
     @objc func addExpenseTapped() {
         let expensePage = AddingExpenseViewController()
-        expensePage.role = role
         navigationController?.pushViewController(expensePage, animated: true)
     }
 }

@@ -1,6 +1,8 @@
 import UIKit
 import Firebase
 import FirebaseAuth
+import PhotosUI
+import FirebaseStorage
 
 class DashboardViewController: UIViewController, UITableViewDataSource {
     
@@ -9,7 +11,6 @@ class DashboardViewController: UIViewController, UITableViewDataSource {
     
     var overrideEmail: String?
     
-
     override func loadView() {
         view = dashboardView
     }
@@ -29,41 +30,31 @@ class DashboardViewController: UIViewController, UITableViewDataSource {
         fetchExpenses(email: overrideEmail ?? currentUserEmail)
         print(currentUserEmail)
     }
-    
+    // Do it by date
     func fetchExpenses(email: String) {
         let db = Firestore.firestore()
 
-        let currentUserEmail = overrideEmail ?? Auth.auth().currentUser?.email
-        
-        guard let email = currentUserEmail else { return }
-        
         db.collection("transactions")
-            .whereField("for_user", isEqualTo: email)
-            .getDocuments { snapshot, error in
-                if let error = error {
-                    print("Error fetching expenses: \(error)")
-                    return
-                }
-                
-                self.transactions = snapshot?.documents.compactMap { document -> Expense? in
+        .whereField("for_user", isEqualTo: email)
+        .getDocuments { snapshot, error in
+            if let error = error {
+                print("Error fetching transactions: \(error)")
+            } else {
+                self.transactions = snapshot?.documents.compactMap { document -> Transaction? in
                     let data = document.data()
-                    return Transaction(
-                        type = data["type"] as? String ?? ""
-                        name = data["name"] as? String ?? ""
-                        price = data["amount"] as? Double ?? 0
-                        desc = data["desc"] as? String ?? "N/A"
-                        date = Date()
-                        image = data["image"] as? String ?? ""
-                        addedBy = data["addedBy"] as? String ?? ""
-                        for_user = data["for_user"] as? String ?? ""
-                    )
+                    let type = data["type"] as? String ?? ""
+                    let name = data["name"] as? String ?? ""
+                    let price = data["amount"] as? Double ?? 0
+                    let desc = data["desc"] as? String ?? "N/A"
+                    let date = Date()
+                    let image = data["image"] as? String ?? ""
+                    let addedBy = data["addedBy"] as? String ?? ""
+                    return Transaction(type: type,name: name, amount: price, desc: desc, date: date, image: image, addedBy: addedBy, for_user: email)
                 } ?? []
                 
-                DispatchQueue.main.async {
-                    //self.tableView.reloadData()
-                  self.dashboardView.tableView.reloadData()
-                }
+                 self.dashboardView.tableView.reloadData()
             }
+        }
     }
     
     // MARK: - TableView DataSource Methods
@@ -74,19 +65,16 @@ class DashboardViewController: UIViewController, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ExpenseCell", for: indexPath) as! ExpenseTableViewCell
         let expense = transactions[indexPath.row]
-        let currDate = Date()
         
         cell.labelName.text = "\(expense.type.uppercased()): \(expense.name)"
         cell.labelPrice.text = "$\(expense.amount)"
-        cell.labelDate.text = "Date: \(currDate)"
+        cell.labelDate.text = "Date: \(expense.date.formatted(date: .numeric, time: .omitted))"
         cell.labelAddedBy.text = "Added by: \(expense.addedBy)"
         if let imageUrl = URL(string: expense.image), !expense.image.isEmpty {
                 cell.expenseImageView.loadRemoteImage(from: imageUrl)
             } else {
                 cell.expenseImageView.image = UIImage(systemName: "photo") // Placeholder image
             }
-        // You can use the image URL for expense.image if required
-        // e.g., load the image asynchronously using a library like SDWebImage
         
         return cell
     }
