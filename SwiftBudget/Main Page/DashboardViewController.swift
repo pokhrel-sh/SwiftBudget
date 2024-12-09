@@ -64,53 +64,34 @@ class DashboardViewController: UIViewController, UITableViewDataSource {
     // MARK: - Fetch Expenses from Firebase
     func fetchExpenses() {
         let db = Firestore.firestore()
-        if overrideEmail == nil {
-            // Fetch current user's email
-            guard let currentUserEmail = Auth.auth().currentUser?.email else { return }
-            print(currentUserEmail)
-            
-            // Query Firebase for expenses added by the current user
-            db.collection("expenses")
-                .whereField("for_user", isEqualTo: currentUserEmail)
-                .getDocuments { snapshot, error in
-                    if let error = error {
-                        print("Error fetching expenses: \(error)")
-                    } else {
-                        self.expenses = snapshot?.documents.compactMap { document -> Expense? in
-                            let data = document.data()
-                            let name = data["name"] as? String ?? ""
-                            let price = data["price"] as? Double ?? 0
-                            let date = data["date"] as? String ?? ""
-                            let image = data["image"] as? String ?? ""
-                            let addedBy = data["addedBy"] as? String ?? ""
-                            return Expense(name: name, price: price, date: Date(), image: image, addedBy: addedBy, for_user: currentUserEmail)
-                        } ?? []
-                        
-                        self.tableView.reloadData()
-                    }
+        let currentUserEmail = overrideEmail ?? Auth.auth().currentUser?.email
+        
+        guard let email = currentUserEmail else { return }
+        
+        db.collection("expenses")
+            .whereField("for_user", isEqualTo: email)
+            .getDocuments { snapshot, error in
+                if let error = error {
+                    print("Error fetching expenses: \(error)")
+                    return
                 }
-        } else {
-            // Query Firebase for expenses added by the current user
-            db.collection("expenses")
-                .whereField("for_user", isEqualTo: (self.overrideEmail)!)
-                .getDocuments { snapshot, error in
-                    if let error = error {
-                        print("Error fetching expenses: \(error)")
-                    } else {
-                        self.expenses = snapshot?.documents.compactMap { document -> Expense? in
-                            let data = document.data()
-                            let name = data["name"] as? String ?? ""
-                            let price = data["price"] as? Double ?? 0
-                            let date = data["date"] as? String ?? ""
-                            let image = data["image"] as? String ?? ""
-                            let addedBy = data["addedBy"] as? String ?? ""
-                            return Expense(name: name, price: price, date: Date(), image: image, addedBy: addedBy, for_user: (self.overrideEmail)!)
-                        } ?? []
-                        
-                        self.tableView.reloadData()
-                    }
+                
+                self.expenses = snapshot?.documents.compactMap { document -> Expense? in
+                    let data = document.data()
+                    return Expense(
+                        name: data["name"] as? String ?? "",
+                        price: data["price"] as? Double ?? 0.0,
+                        date: Date(), // Convert to Date if stored as a String
+                        image: data["image"] as? String ?? "",
+                        addedBy: data["addedBy"] as? String ?? "",
+                        for_user: data["for_user"] as? String ?? ""
+                    )
+                } ?? []
+                
+                DispatchQueue.main.async {
+                    self.tableView.reloadData()
                 }
-        }
+            }
     }
     
     // MARK: - TableView DataSource Methods
@@ -126,6 +107,11 @@ class DashboardViewController: UIViewController, UITableViewDataSource {
         cell.labelPrice.text = "$\(expense.price)"
         cell.labelDate.text = "Date: \(currDate)"
         cell.labelAddedBy.text = "Added by: \(expense.addedBy)"
+        if let imageUrl = URL(string: expense.image), !expense.image.isEmpty {
+                cell.expenseImageView.loadRemoteImage(from: imageUrl)
+            } else {
+                cell.expenseImageView.image = UIImage(systemName: "photo") // Placeholder image
+            }
         // You can use the image URL for expense.image if required
         // e.g., load the image asynchronously using a library like SDWebImage
         
