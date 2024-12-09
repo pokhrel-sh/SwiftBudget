@@ -7,6 +7,8 @@ import FirebaseStorage
 
 class AddingExpenseViewController: UIViewController {
     
+    var addingExpensePage = AddingExpense()
+    var selectedChild: String?
 
     var SelectedUser: String?
     var role: String?
@@ -33,13 +35,13 @@ class AddingExpenseViewController: UIViewController {
             return
         }
       
-        fetchUserRole()
+        fetchUserRole(email: email)
         fetchFamilyCircle(email: email)
         
         // Add actions
-        addingExpensePage.addExpenseButton.addTarget(self, action: #selector(saveExpense), for: .touchUpInside)
-        addingExpensePage.buttonTakePhoto.menu = getMenuImagePicker()
-        addingExpensePage.buttonTakePhoto.showsMenuAsPrimaryAction = true
+        addingExpensePage.addExpenseButton.addTarget(self, action: #selector(handleSaveExpense), for: .touchUpInside)
+        addingExpensePage.cameraButton.menu = getMenuImagePicker()
+        addingExpensePage.cameraButton.showsMenuAsPrimaryAction = true
     }
     
     func getMenuImagePicker() -> UIMenu{
@@ -179,6 +181,7 @@ class AddingExpenseViewController: UIViewController {
 extension AddingExpenseViewController{
     @objc func handleSaveExpense() {
         uploadProfilePhotoToStorage()
+        self.navigationController?.popViewController(animated: true)
     }
     
     func uploadProfilePhotoToStorage() {
@@ -247,7 +250,7 @@ extension AddingExpenseViewController:PHPickerViewControllerDelegate{
                     completionHandler: { (image, error) in
                         DispatchQueue.main.async{
                             if let uwImage = image as? UIImage{
-                                self.addingExpensePage.buttonTakePhoto.setImage(
+                                self.addingExpensePage.cameraButton.setImage(
                                     uwImage.withRenderingMode(.alwaysOriginal),
                                     for: .normal
                                 )
@@ -267,7 +270,7 @@ extension AddingExpenseViewController: UINavigationControllerDelegate, UIImagePi
         picker.dismiss(animated: true)
         
         if let image = info[.editedImage] as? UIImage{
-            self.addingExpensePage.buttonTakePhoto.setImage(
+            self.addingExpensePage.cameraButton.setImage(
                 image.withRenderingMode(.alwaysOriginal),
                 for: .normal
             )
