@@ -11,7 +11,7 @@ class ParentDashboardTableViewCell: UITableViewCell {
     var wrapperCellView: UIView!
     var labelName: UILabel!
     var labelEmail: UILabel!
-    //var labelBalance: UILabel!
+    var labelBalance: UILabel!
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?){
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -19,7 +19,7 @@ class ParentDashboardTableViewCell: UITableViewCell {
         setupWrapperCellView()
         setupLabelName()
         setupLabelEmail()
-        //setupLabelBalance()
+        setupLabelBalance()
         
         initConstraints()
     }
@@ -51,14 +51,14 @@ class ParentDashboardTableViewCell: UITableViewCell {
         labelEmail.translatesAutoresizingMaskIntoConstraints = false
         wrapperCellView.addSubview(labelEmail)
     }
-    /*
+    
     func setupLabelBalance(){
         labelBalance = UILabel()
         labelBalance.font = UIFont.boldSystemFont(ofSize: 14)
         labelBalance.translatesAutoresizingMaskIntoConstraints = false
         wrapperCellView.addSubview(labelBalance)
     }
-    */
+    
     func initConstraints(){
         NSLayoutConstraint.activate([
             wrapperCellView.topAnchor.constraint(equalTo: self.topAnchor,constant: 10),
@@ -75,13 +75,13 @@ class ParentDashboardTableViewCell: UITableViewCell {
             labelEmail.leadingAnchor.constraint(equalTo: labelName.leadingAnchor),
             labelEmail.heightAnchor.constraint(equalToConstant: 16),
             labelEmail.widthAnchor.constraint(lessThanOrEqualTo: labelName.widthAnchor),
-            /*
+            
             labelBalance.topAnchor.constraint(equalTo: labelEmail.bottomAnchor, constant: 2),
             labelBalance.leadingAnchor.constraint(equalTo: labelEmail.leadingAnchor),
             labelBalance.heightAnchor.constraint(equalToConstant: 16),
             labelBalance.widthAnchor.constraint(lessThanOrEqualTo: labelName.widthAnchor),
-            */
-            wrapperCellView.heightAnchor.constraint(equalToConstant: 52)
+            
+            wrapperCellView.heightAnchor.constraint(equalToConstant: 72)
         ])
     }
     

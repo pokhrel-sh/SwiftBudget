@@ -56,19 +56,8 @@ class StudentSignupViewController: UIViewController {
                     self.showAlert("Database error: \(error.localizedDescription)")
                 } else {
                     self.showAlert("Registration successful!", action: {
-                        self.navigationController?.pushViewController(DashboardViewController(), animated: true)
-                    })
-                }
-            }
-            self.db.collection("budget").document(uid).setData([
-                "email": email,
-                "parent_email": email,
-            ]) { error in
-                if let error = error {
-                    self.showAlert("Database error: \(error.localizedDescription)")
-                } else {
-                    self.showAlert("Registration successful!", action: {
-                        self.navigationController?.pushViewController(DashboardViewController(), animated: true)
+                        let dashboard = PersonalDashboardViewController()
+                        self.navigationController?.pushViewController(dashboard, animated: true)
                     })
                 }
             }

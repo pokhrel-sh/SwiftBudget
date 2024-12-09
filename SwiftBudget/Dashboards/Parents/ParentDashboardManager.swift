@@ -8,6 +8,7 @@
 import Foundation
 import UIKit
 import FirebaseAuth
+import FirebaseFirestore
 
 extension ParentDashboardViewController: UITableViewDelegate, UITableViewDataSource{
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -18,6 +19,7 @@ extension ParentDashboardViewController: UITableViewDelegate, UITableViewDataSou
         let cell = tableView.dequeueReusableCell(withIdentifier: Configs.tableViewStudentsID, for: indexPath) as! ParentDashboardTableViewCell
         cell.labelName.text = familyList[indexPath.row].name
         cell.labelEmail.text = familyList[indexPath.row].email
+        cell.labelBalance.text = "Balance: \(familyList[indexPath.row].balance ?? 0.0)"
         
         //MARK: crating an accessory button...
         let buttonOptions = UIButton(type: .system)

@@ -30,7 +30,6 @@ class LoginViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "Login"
         
         loginScreen.submitButton.addTarget(self, action: #selector(onSigninTapped), for: .touchUpInside)
         loginScreen.signupButton.addTarget(self, action: #selector(onSignupTapped), for: .touchUpInside)
@@ -66,11 +65,13 @@ class LoginViewController: UIViewController {
                             if let role = data["role"] as? String, let name = data["name"] as? String, let email = data["email"] as? String{
                                 if role == "Parent" {
                                     let ParentDashboard = ParentDashboardViewController()
+                                    ParentDashboard.parentName = name
                                     self.navigationController?.pushViewController(ParentDashboard, animated: true)
                                 } else {
                                     let personalDashboard = PersonalDashboardViewController()
                                     personalDashboard.name = name
                                     personalDashboard.email = email
+                                    personalDashboard.role = role
                                     self.navigationController?.pushViewController(personalDashboard, animated: true)
                                 }
                             } else {

@@ -8,6 +8,7 @@ class AddingExpenseViewController: UIViewController {
     var currentUser:FirebaseAuth.User?
     var SelectedUser:String?
     let database = Firestore.firestore()
+    var role: String?
         
     override func loadView() {
         view = addingExpensePage
@@ -16,12 +17,11 @@ class AddingExpenseViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
-        title = "Adding Expense"
+        title = "Adding Expense Page"
         
         setupCurrentUser()
       
-        // Add actions
-        addingExpensePage.saveButton.addTarget(self, action: #selector(saveExpense), for: .touchUpInside)
+        addingExpensePage.addExpenseButton.addTarget(self, action: #selector(saveExpense), for: .touchUpInside)
     }
     
     func setupCurrentUser() {
@@ -58,38 +58,30 @@ class AddingExpenseViewController: UIViewController {
     }
 
     @objc func saveExpense() {
-        guard let name = addingExpensePage.nameTextField.text, !name.isEmpty,
-              let priceText = addingExpensePage.priceTextField.text, let price = Double(priceText), !priceText.isEmpty,
+        guard let name = addingExpensePage.expenseNameTextField.text, !name.isEmpty,
+              let desc = addingExpensePage.expenseDescriptionTextField.text, !desc.isEmpty,
+              let priceText = addingExpensePage.expenseTextField.text, let price = Double(priceText), !priceText.isEmpty,
               let addedBy = self.currentUser?.email, let selected = self.SelectedUser else {
             showError("Please fill all fields correctly.")
             return
         }
         
-        let expense = Expense(name: name, price: price, date: Date(), image: "", addedBy: addedBy, for_user: selected)
-        
-        saveToFirebase(expense: expense)
+        if self.role == "Kid" {
+            let expense = Transaction(type: "expense", name: name, amount: price, desc: desc, date: Date(), image: "", addedBy: addedBy, for_user: selected)
+            saveToFirebase(expense: expense)
+        } else {
+            let expense = Transaction(type: "expense", name: name, amount: price, desc: desc, date: Date(), image: "", addedBy: addedBy, for_user: addedBy)
+            saveToFirebase(expense: expense)
+        }
     }
     
-    func saveToFirebase(expense: Expense) {
+    func saveToFirebase(expense: Transaction) {
         
-        database.collection("expenses").addDocument(data: [
+        database.collection("transactions").addDocument(data: [
+            "type": expense.type,
             "name": expense.name,
-            "price": expense.price,
-            "date": expense.date,
-            "image": expense.image,
-            "addedBy": expense.addedBy,
-            "for_user": expense.for_user
-        ]) { error in
-            if let error = error {
-                print("Error adding document: \(error)")
-            } else {
-                self.navigationController?.popViewController(animated: true)
-            }
-        }
-        
-        db.collection("transactions").addDocument(data: [
-            "name": expense.name,
-            "amount": expense.price,
+            "amount": expense.amount,
+            "desc": expense.desc,
             "date": expense.date,
             "image": expense.image,
             "addedBy": expense.addedBy,

@@ -10,7 +10,6 @@ class AddingIncome: UIView {
     var incomeDescription: UILabel!
     var incomeDescriptionTextField: UITextField!
     var addIncomeButton: UIButton!
-    var backButton: UIButton!
     var cameraButton: UIButton! // New camera button
     
     override init(frame: CGRect) {
@@ -25,7 +24,6 @@ class AddingIncome: UIView {
         setupIncomeDescription()
         setupIncomeDescriptionTextField()
         setupAddIncomeButton()
-        setupBackButton()
         setupCameraButton() // Setting up the camera button
         
         initConstraints()
@@ -101,14 +99,6 @@ class AddingIncome: UIView {
         self.addSubview(addIncomeButton)
     }
     
-    func setupBackButton() {
-        backButton = UIButton(type: .system)
-        backButton.setTitle("Back", for: .normal)
-        backButton.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
-        backButton.translatesAutoresizingMaskIntoConstraints = false
-        self.addSubview(backButton)
-    }
-    
     func setupCameraButton() {
         cameraButton = UIButton(type: .system)
         cameraButton.setTitle("Take Photo", for: .normal)
@@ -165,19 +155,14 @@ class AddingIncome: UIView {
             incomeDescriptionTextField.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -20),
             incomeDescriptionTextField.heightAnchor.constraint(equalToConstant: 40),
             
-            // Add Income Button
-            addIncomeButton.topAnchor.constraint(equalTo: incomeDescriptionTextField.bottomAnchor, constant: 30),
-            addIncomeButton.centerXAnchor.constraint(equalTo: self.centerXAnchor),
-            
-            // Back Button
-            backButton.centerYAnchor.constraint(equalTo: incomeTitle.centerYAnchor),
-            backButton.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 20),
-            
-            // Camera Button
-            cameraButton.topAnchor.constraint(equalTo: addIncomeButton.bottomAnchor, constant: 20),
+            cameraButton.topAnchor.constraint(equalTo: incomeDescriptionTextField.bottomAnchor, constant: 20),
             cameraButton.centerXAnchor.constraint(equalTo: self.centerXAnchor),
             cameraButton.widthAnchor.constraint(equalToConstant: 150),
-            cameraButton.heightAnchor.constraint(equalToConstant: 50)
+            cameraButton.heightAnchor.constraint(equalToConstant: 50),
+            
+            // Add Income Button
+            addIncomeButton.topAnchor.constraint(equalTo: cameraButton.bottomAnchor, constant: 30),
+            addIncomeButton.centerXAnchor.constraint(equalTo: self.centerXAnchor),
         ])
     }
 }

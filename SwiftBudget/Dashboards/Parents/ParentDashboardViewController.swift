@@ -15,6 +15,8 @@ class ParentDashboardViewController: UIViewController {
     
     var familyList = [FamilyCircle]()
     
+    var parentName = ""
+    
     var handleAuth: AuthStateDidChangeListenerHandle?
     
     var currentUser:FirebaseAuth.User?
@@ -38,40 +40,73 @@ class ParentDashboardViewController: UIViewController {
                 self.dashboard.tableView.reloadData()
                 
                 self.setupRightBarButton(isLoggedin: false)
-
+                
             }else{
                 self.currentUser = user
                 
-                self.dashboard.labelAdd.isEnabled = true
-                self.dashboard.labelAdd.isHidden = false
-                
                 //MARK: the user is signed in...
                 self.setupRightBarButton(isLoggedin: true)
-    
+                
                 //MARK: Observe Firestore database to display the family list...
                 self.database.collection("users2")
-                    .whereField("parentEmail", isEqualTo: (self.currentUser?.email)!)// Maybe dont force unwrap
-                    .addSnapshotListener(includeMetadataChanges: false, listener: {querySnapshot, error in
-                        if let documents = querySnapshot?.documents{
-                            self.familyList.removeAll()
-                            for document in documents{
-                                do{
-                                    let student  = try document.data(as: FamilyCircle.self)
+                .whereField("parentEmail", isEqualTo: (self.currentUser?.email)!)
+                .addSnapshotListener(includeMetadataChanges: false, listener: {querySnapshot, error in
+                    if let documents = querySnapshot?.documents{
+                        self.familyList.removeAll()
+                                                
+                        for document in documents {
+                            do {
+                                var student = try document.data(as: FamilyCircle.self)
+                                
+                                self.listenToTransaction(student: student.email) { balance in
+                                    student.balance = balance
                                     self.familyList.append(student)
-                                }catch{
-                                    print(error)
+                                    self.dashboard.tableView.reloadData()
                                 }
+                            } catch {
+                                print(error)
                             }
-                            self.dashboard.tableView.reloadData()
                         }
+                    }
                 })
+            }
+        }
+    }
+    
+    func listenToTransaction(student: String, completion: @escaping (Double) -> Void) {
+        self.database.collection("transactions")
+        .whereField("for_user", isEqualTo: student)
+        .addSnapshotListener(includeMetadataChanges: false) { querySnapshot, error in
+            if let error = error {
+                print("Error fetching expenses: \(error.localizedDescription)")
+                completion(0.0)
+                return
+            }
+                
+            if let documents = querySnapshot?.documents {
+                var totalExpense = 0.0
+                var totalIncome = 0.0
+                
+                for document in documents {
+                    if let type = document.data()["type"] as? String,
+                       let amount = document.data()["amount"] as? Double {
+                        if type == "expense" {
+                            totalExpense += amount
+                        } else {
+                            totalIncome += amount
+                        }
+                    }
+                }
+                
+                let balance = totalIncome - totalExpense
+                completion(balance)
             }
         }
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "Welcome!"
+        title = "Welcome \(self.parentName)!"
         
         self.navigationItem.hidesBackButton = true
 
@@ -83,7 +118,6 @@ class ParentDashboardViewController: UIViewController {
         dashboard.tableView.separatorStyle = .none
         
         navigationController?.navigationBar.prefersLargeTitles = true
-
     }
     
     override func viewWillDisappear(_ animated: Bool) {

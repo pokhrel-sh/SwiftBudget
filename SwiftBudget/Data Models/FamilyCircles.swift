@@ -21,24 +21,16 @@ enum Role: String {
 struct FamilyCircle: Codable {
     var name: String
     var email: String
+    var balance: Double?
 }
 
-struct Expense {
+struct Transaction {
+    var type: String
     var name: String
-    var price: Double
+    var amount: Double
+    var desc: String
     var date: Date
     var image: String // URL or local image path
     var addedBy: String
     var for_user: String
 }
-
-struct Budget {
-    var name: String
-    var amount: Double
-    var date: Date
-    var image: String = "" // URL or local image path
-    var addedBy: String
-    var for_user: String
-}
-
-
