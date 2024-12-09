@@ -4,7 +4,7 @@ import FirebaseAuth
 import PhotosUI
 import FirebaseStorage
 
-class DashboardViewController: UIViewController, UITableViewDataSource {
+class DashboardViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
     var transactions: [Transaction] = []
     var dashboardView = DashboardView()
@@ -21,6 +21,7 @@ class DashboardViewController: UIViewController, UITableViewDataSource {
         
         dashboardView.tableView.register(ExpenseTableViewCell.self, forCellReuseIdentifier: "ExpenseCell")
         dashboardView.tableView.dataSource = self
+        dashboardView.tableView.delegate = self
     }
     
    
@@ -80,15 +81,17 @@ class DashboardViewController: UIViewController, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-            let currentTransaction = self.transactions[indexPath.row]
-            let message = """
-                    Transaction Name: \(currentTransaction.name)
-                    Price: \(currentTransaction.amount)
-                    Date: \(currentTransaction.date)
-                    Description: \(currentTransaction.desc)
-                    """
-            showAlert(message)
+        let currentTransaction = self.transactions[indexPath.row]
+        print(currentTransaction)
+        let message = """
+                Transaction Name: \(currentTransaction.name)
+                Price: \(currentTransaction.amount)
+                Date: \(currentTransaction.date)
+                Description: \(currentTransaction.desc)
+                """
+        showAlert(message)
     }
+    
         
     func showAlert(_ message: String) {
         let alert = UIAlertController(title: "Transaction", message: message, preferredStyle: .alert)
