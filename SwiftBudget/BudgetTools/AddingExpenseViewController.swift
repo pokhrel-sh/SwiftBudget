@@ -115,6 +115,21 @@ class AddingExpenseViewController: UIViewController {
                 self.navigationController?.popViewController(animated: true)
             }
         }
+        
+        db.collection("transactions").addDocument(data: [
+            "name": expense.name,
+            "amount": expense.price,
+            "date": expense.date,
+            "image": expense.image,
+            "addedBy": expense.addedBy,
+            "for_user": expense.for_user
+        ]) { error in
+            if let error = error {
+                print("Error adding document: \(error)")
+            } else {
+                self.navigationController?.popViewController(animated: true)
+            }
+        }
     }
     
     func showError(_ message: String) {

@@ -25,7 +25,6 @@ class ExpenseScreen: UIView {
         addExpense.setTitle("Add Expense", for: .normal)
         addExpense.titleLabel?.font = .boldSystemFont(ofSize: 16)
         addExpense.translatesAutoresizingMaskIntoConstraints = false
-        addExpense.addTarget(self, action: #selector(addExpenseTapped), for: .touchUpInside)
         self.addSubview(addExpense)
     }
     
@@ -34,10 +33,6 @@ class ExpenseScreen: UIView {
         tableViewExpense.register(ExpenseTableViewCell.self, forCellReuseIdentifier: "ExpenseCell")
         tableViewExpense.translatesAutoresizingMaskIntoConstraints = false
         self.addSubview(tableViewExpense)
-    }
-    
-    @objc func addExpenseTapped() {
-        // Navigate to the add expense screen or show a modal
     }
 
     func initConstraints() {
