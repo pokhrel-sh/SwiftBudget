@@ -10,7 +10,7 @@ import UIKit
 class ParentDashboardTableViewCell: UITableViewCell {
     var wrapperCellView: UIView!
     var labelName: UILabel!
-    //var labelEmail: UILabel!
+    var labelEmail: UILabel!
     //var labelBalance: UILabel!
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?){
@@ -18,7 +18,7 @@ class ParentDashboardTableViewCell: UITableViewCell {
         
         setupWrapperCellView()
         setupLabelName()
-        //setupLabelEmail()
+        setupLabelEmail()
         //setupLabelBalance()
         
         initConstraints()
@@ -44,14 +44,14 @@ class ParentDashboardTableViewCell: UITableViewCell {
         labelName.translatesAutoresizingMaskIntoConstraints = false
         wrapperCellView.addSubview(labelName)
     }
-    /*
+    
     func setupLabelEmail(){
         labelEmail = UILabel()
         labelEmail.font = UIFont.boldSystemFont(ofSize: 14)
         labelEmail.translatesAutoresizingMaskIntoConstraints = false
         wrapperCellView.addSubview(labelEmail)
     }
-    
+    /*
     func setupLabelBalance(){
         labelBalance = UILabel()
         labelBalance.font = UIFont.boldSystemFont(ofSize: 14)
@@ -70,12 +70,12 @@ class ParentDashboardTableViewCell: UITableViewCell {
             labelName.leadingAnchor.constraint(equalTo: wrapperCellView.leadingAnchor, constant: 16),
             labelName.heightAnchor.constraint(equalToConstant: 20),
             labelName.widthAnchor.constraint(lessThanOrEqualTo: wrapperCellView.widthAnchor),
-            /*
+            
             labelEmail.topAnchor.constraint(equalTo: labelName.bottomAnchor, constant: 2),
             labelEmail.leadingAnchor.constraint(equalTo: labelName.leadingAnchor),
             labelEmail.heightAnchor.constraint(equalToConstant: 16),
             labelEmail.widthAnchor.constraint(lessThanOrEqualTo: labelName.widthAnchor),
-            
+            /*
             labelBalance.topAnchor.constraint(equalTo: labelEmail.bottomAnchor, constant: 2),
             labelBalance.leadingAnchor.constraint(equalTo: labelEmail.leadingAnchor),
             labelBalance.heightAnchor.constraint(equalToConstant: 16),

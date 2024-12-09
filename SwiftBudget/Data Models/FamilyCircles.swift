@@ -18,7 +18,7 @@ enum Role: String {
     case student = "student"
 }
 
-struct FamilyCircle {
+struct FamilyCircle: Codable {
     var name: String
     var email: String
 }

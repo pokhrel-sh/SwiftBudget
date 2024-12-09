@@ -5,7 +5,9 @@ import FirebaseAuth
 class AddingExpenseViewController: UIViewController {
     
     let addingExpensePage = AddingExpense()
-    var selectedChild: String? // Track the selected child
+    var currentUser:FirebaseAuth.User?
+    var SelectedUser:String?
+    let database = Firestore.firestore()
         
     override func loadView() {
         view = addingExpensePage
@@ -17,34 +19,23 @@ class AddingExpenseViewController: UIViewController {
         title = "Adding Expense"
         
         setupCurrentUser()
-        guard let email = Auth.auth().currentUser?.email else {
-            print("No user email found")
-            return
-        }
-        fetchUserRole()
-        fetchFamilyCircle(email: email)
-        
+      
         // Add actions
         addingExpensePage.saveButton.addTarget(self, action: #selector(saveExpense), for: .touchUpInside)
     }
     
     func setupCurrentUser() {
-        if let user = Auth.auth().currentUser {
-            addingExpensePage.addedByTextField.text = user.email
-            fetchUserRole()
-        }
-    }
-    
-    func fetchUserRole() {
         guard let user = Auth.auth().currentUser else {
             print("No user is signed in.")
             return
         }
+        self.currentUser = user
+        fetchUserRole(email: (self.currentUser?.email)!)
+    }
+    
+    func fetchUserRole(email: String) {
 
-        let db = Firestore.firestore()
-        
-        // Fetching the user document by UID (UID is now the document ID)
-        db.collection("users2").document(user.uid).getDocument { (document, error) in
+        database.collection("users2").document((self.currentUser?.uid)!).getDocument { (document, error) in
             if let error = error {
                 print("Error getting document: \(error.localizedDescription)")
                 return
@@ -56,9 +47,9 @@ class AddingExpenseViewController: UIViewController {
                 
                 print("FetchUserRole: \(role)") // Check what role is fetched
                 
-                if role == "Parent" {
-                    self.fetchFamilyCircle(email: user.email!)
-                    self.addingExpensePage.selectChildTextField.isHidden = false // Show the picker field
+                if role == "Kid" {
+                    self.SelectedUser = email
+                    print("Role is kid and email is: \(email)")
                 }
             } else {
                 print("Document does not exist")
@@ -66,42 +57,22 @@ class AddingExpenseViewController: UIViewController {
         }
     }
 
-    
-    func fetchFamilyCircle(email: String) {
-        print("fetchFamilyCircle called with email: \(email)")
-        let db = Firestore.firestore()
-        db.collection("familyCircle").whereField("email", isEqualTo: email).getDocuments { (snapshot, error) in
-            if let error = error {
-                print("Error fetching kids: \(error)")
-                return
-            }
-            
-            guard let documents = snapshot?.documents, let data = documents.first?.data() else {
-                print("No matching documents found")
-                return
-            }
-        }
-    }
-    
     @objc func saveExpense() {
         guard let name = addingExpensePage.nameTextField.text, !name.isEmpty,
-              let priceText = addingExpensePage.priceTextField.text, let price = Double(priceText),
-              let date = addingExpensePage.dateTextField.text, !date.isEmpty,
-              let addedBy = addingExpensePage.addedByTextField.text, !addedBy.isEmpty else {
+              let priceText = addingExpensePage.priceTextField.text, let price = Double(priceText), !priceText.isEmpty,
+              let addedBy = self.currentUser?.email, let selected = self.SelectedUser else {
             showError("Please fill all fields correctly.")
             return
         }
         
-        let forUser = selectedChild ?? addedBy // Use selected child or addedBy for `for_user`
+        let expense = Expense(name: name, price: price, date: Date(), image: "", addedBy: addedBy, for_user: selected)
         
-        let expense = Expense(name: name, price: price, date: Date(), image: "", addedBy: addedBy, for_user: forUser)
         saveToFirebase(expense: expense)
     }
     
     func saveToFirebase(expense: Expense) {
-        let db = Firestore.firestore()
         
-        db.collection("expenses").addDocument(data: [
+        database.collection("expenses").addDocument(data: [
             "name": expense.name,
             "price": expense.price,
             "date": expense.date,
