@@ -79,6 +79,23 @@ class DashboardViewController: UIViewController, UITableViewDataSource {
         return cell
     }
     
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+            let currentTransaction = self.transactions[indexPath.row]
+            let message = """
+                    Transaction Name: \(currentTransaction.name)
+                    Price: \(currentTransaction.amount)
+                    Date: \(currentTransaction.date)
+                    Description: \(currentTransaction.desc)
+                    """
+            showAlert(message)
+    }
+        
+    func showAlert(_ message: String) {
+        let alert = UIAlertController(title: "Transaction", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        present(alert, animated: true, completion: nil)
+    }
+    
     // MARK: - Add Expense Button Action
     @objc func addExpenseTapped() {
         let addExpenseVC = AddingExpenseViewController()
