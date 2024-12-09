@@ -21,7 +21,7 @@ class DashboardViewController: UIViewController, UITableViewDataSource {
         super.viewDidLoad()
         
         setupUI()
-        fetchExpenses()
+        loadTransactions()
     }
     
     // MARK: - Setup UI Elements
@@ -30,7 +30,7 @@ class DashboardViewController: UIViewController, UITableViewDataSource {
         
         // Setup Add Expense Button
         addExpenseButton = UIButton(type: .system)
-        addExpenseButton.setTitle("Add Expense", for: .normal)
+        addExpenseButton.setTitle("Do Not Press", for: .normal)
         addExpenseButton.titleLabel?.font = .boldSystemFont(ofSize: 16)
         addExpenseButton.translatesAutoresizingMaskIntoConstraints = false
         addExpenseButton.addTarget(self, action: #selector(addExpenseTapped), for: .touchUpInside)
@@ -61,56 +61,38 @@ class DashboardViewController: UIViewController, UITableViewDataSource {
         ])
     }
     
-    // MARK: - Fetch Expenses from Firebase
-    func fetchExpenses() {
+   
+    // MARK: - Loading and fethcing transactions
+    func loadTransactions() {
+        guard let currentUserEmail = Auth.auth().currentUser?.email else { return }
+        fetchExpenses(email: overrideEmail ?? currentUserEmail)
+        print(self.overrideEmail)
+        print(currentUserEmail)
+    }
+    func fetchExpenses(email: String) {
         let db = Firestore.firestore()
-        if overrideEmail == nil {
-            // Fetch current user's email
-            guard let currentUserEmail = Auth.auth().currentUser?.email else { return }
-            print(currentUserEmail)
-            
-            // Query Firebase for expenses added by the current user
-            db.collection("expenses")
-                .whereField("for_user", isEqualTo: currentUserEmail)
-                .getDocuments { snapshot, error in
-                    if let error = error {
-                        print("Error fetching expenses: \(error)")
-                    } else {
-                        self.expenses = snapshot?.documents.compactMap { document -> Expense? in
-                            let data = document.data()
-                            let name = data["name"] as? String ?? ""
-                            let price = data["price"] as? Double ?? 0
-                            let date = data["date"] as? String ?? ""
-                            let image = data["image"] as? String ?? ""
-                            let addedBy = data["addedBy"] as? String ?? ""
-                            return Expense(name: name, price: price, date: Date(), image: image, addedBy: addedBy, for_user: currentUserEmail)
-                        } ?? []
-                        
-                        self.tableView.reloadData()
-                    }
+        
+        
+        // Query Firebase for expenses added by the current user
+        db.collection("expenses")
+            .whereField("for_user", isEqualTo: email)
+            .getDocuments { snapshot, error in
+                if let error = error {
+                    print("Error fetching expenses: \(error)")
+                } else {
+                    self.expenses = snapshot?.documents.compactMap { document -> Expense? in
+                        let data = document.data()
+                        let name = data["name"] as? String ?? ""
+                        let price = data["price"] as? Double ?? 0
+                        let date = data["date"] as? String ?? ""
+                        let image = data["image"] as? String ?? ""
+                        let addedBy = data["addedBy"] as? String ?? ""
+                        return Expense(name: name, price: price, date: Date(), image: image, addedBy: addedBy, for_user: email)
+                    } ?? []
+                    
+                    self.tableView.reloadData()
                 }
-        } else {
-            // Query Firebase for expenses added by the current user
-            db.collection("expenses")
-                .whereField("for_user", isEqualTo: (self.overrideEmail)!)
-                .getDocuments { snapshot, error in
-                    if let error = error {
-                        print("Error fetching expenses: \(error)")
-                    } else {
-                        self.expenses = snapshot?.documents.compactMap { document -> Expense? in
-                            let data = document.data()
-                            let name = data["name"] as? String ?? ""
-                            let price = data["price"] as? Double ?? 0
-                            let date = data["date"] as? String ?? ""
-                            let image = data["image"] as? String ?? ""
-                            let addedBy = data["addedBy"] as? String ?? ""
-                            return Expense(name: name, price: price, date: Date(), image: image, addedBy: addedBy, for_user: (self.overrideEmail)!)
-                        } ?? []
-                        
-                        self.tableView.reloadData()
-                    }
-                }
-        }
+            }
     }
     
     // MARK: - TableView DataSource Methods

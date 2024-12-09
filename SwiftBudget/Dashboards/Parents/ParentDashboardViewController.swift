@@ -13,7 +13,7 @@ class ParentDashboardViewController: UIViewController {
     
     let dashboard = ParentDashboard()
     
-    var familyList = [String]()
+    var familyList = [FamilyCircle]()
     
     var handleAuth: AuthStateDidChangeListenerHandle?
     
@@ -49,15 +49,17 @@ class ParentDashboardViewController: UIViewController {
                 self.setupRightBarButton(isLoggedin: true)
     
                 //MARK: Observe Firestore database to display the family list...
-                self.database.collection("familyCircle")
-                    .whereField("email", isEqualTo: (self.currentUser?.email)!)// Maybe dont force unwrap
+                self.database.collection("users2")
+                    .whereField("parentEmail", isEqualTo: (self.currentUser?.email)!)// Maybe dont force unwrap
                     .addSnapshotListener(includeMetadataChanges: false, listener: {querySnapshot, error in
                         if let documents = querySnapshot?.documents{
                             self.familyList.removeAll()
                             for document in documents{
-                                if let studentIds = document.data()["kids"] as? [String] {
-                                    self.familyList.append(contentsOf: studentIds)
-                                    print(self.familyList)
+                                do{
+                                    let student  = try document.data(as: FamilyCircle.self)
+                                    self.familyList.append(student)
+                                }catch{
+                                    print(error)
                                 }
                             }
                             self.dashboard.tableView.reloadData()
