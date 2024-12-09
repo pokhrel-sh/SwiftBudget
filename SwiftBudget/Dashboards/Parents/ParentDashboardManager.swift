@@ -8,6 +8,7 @@
 import Foundation
 import UIKit
 import FirebaseAuth
+import FirebaseFirestore
 
 extension ParentDashboardViewController: UITableViewDelegate, UITableViewDataSource{
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -16,7 +17,9 @@ extension ParentDashboardViewController: UITableViewDelegate, UITableViewDataSou
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: Configs.tableViewStudentsID, for: indexPath) as! ParentDashboardTableViewCell
-        cell.labelName.text = familyList[indexPath.row]
+        cell.labelName.text = familyList[indexPath.row].name
+        cell.labelEmail.text = familyList[indexPath.row].email
+        cell.labelBalance.text = "Balance: \(familyList[indexPath.row].balance ?? 0.0)"
         
         //MARK: crating an accessory button...
         let buttonOptions = UIButton(type: .system)
@@ -43,20 +46,21 @@ extension ParentDashboardViewController: UITableViewDelegate, UITableViewDataSou
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let studentDash = DashboardViewController()
-        studentDash.overrideEmail = familyList[indexPath.row]
+        studentDash.overrideEmail = familyList[indexPath.row].email
+        print(familyList[indexPath.row])
         self.navigationController?.pushViewController(studentDash, animated: true)
     }
     
     func allowanceSelected(student: Int){
         let income = AddingIncomeViewController()
-        income.SelectedUser = familyList[student]
+        income.SelectedUser = familyList[student].email
         print(familyList[student])
         self.navigationController?.pushViewController(income, animated: true)
     }
 
     func expenseSelectedFor(student: Int){
         let expense = AddingExpenseViewController()
-        expense.selectedChild = familyList[student]
+        expense.SelectedUser = familyList[student].email
         self.navigationController?.pushViewController(expense, animated: true)
     }
 }

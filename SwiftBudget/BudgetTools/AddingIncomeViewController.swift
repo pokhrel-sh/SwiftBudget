@@ -13,9 +13,11 @@ class AddingIncomeViewController: UIViewController {
     
     let addIncomePage = AddingIncome()
     var selectedChild: String? // Track the selected child
-    var currentUser:FirebaseAuth.User?
-    var SelectedUser:String?
+    var currentUser: FirebaseAuth.User?
+    var SelectedUser: String?
     let database = Firestore.firestore()
+    
+    var role: String?
     
     
     override func loadView() {
@@ -25,12 +27,10 @@ class AddingIncomeViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
-        
-        title = "Adding Income"
+        title = "Adding Income Page"
         
         setupCurrentUser()
     
-        // Add actions
         addIncomePage.addIncomeButton.addTarget(self, action: #selector(saveIncome), for: .touchUpInside)
     }
     
@@ -43,7 +43,6 @@ class AddingIncomeViewController: UIViewController {
     
     func fetchUserRole(email: String) {
        
-        // Fetching the user document by UID (UID is now the document ID)
         database.collection("users2").document((self.currentUser?.uid)!).getDocument { (document, error) in
             if let error = error {
                 print("Error getting document: \(error.localizedDescription)")
@@ -52,15 +51,13 @@ class AddingIncomeViewController: UIViewController {
             
             if let document = document, document.exists {
                 let data = document.data()
-                let role = data?["role"] as? String ?? ""
+                let role = data?["role"] as? String ?? "Parent"
                 
                 print("FetchUserRole: \(role)") // Check what role is fetched
                 
                 if role == "Kid" {
                     self.SelectedUser = email
                     print("Role is kid and email is: \(email)")
-                } else {
-                    
                 }
             } else {
                 print("Document does not exist")
@@ -69,25 +66,38 @@ class AddingIncomeViewController: UIViewController {
     }
     
     @objc func saveIncome() {
-        if let name = addIncomePage.incomeNameTextField.text, let incomeAmount = addIncomePage.incomeTextField.text, let income = Double(incomeAmount), let addedBy = self.currentUser?.email, let selected = self.SelectedUser {
+        guard let name = addIncomePage.incomeNameTextField.text, !name.isEmpty,
+              let desc = addIncomePage.incomeDescriptionTextField.text, !desc.isEmpty,
+              let incomeAmount = addIncomePage.incomeTextField.text,
+              let income = Double(incomeAmount), !incomeAmount.isEmpty,
+              let addedBy = self.currentUser?.email, let selected = self.SelectedUser else {
             
-            
-            let budget = Budget(name: name, amount: income, date: Date(), image: "", addedBy: addedBy, for_user: selected)
-            
-            saveToFirebase(budget: budget)
+            showError("Please fill all fields correctly.")
+            return
+        }
+        
+        if self.role == "Kid" {
+            let newIncome = Transaction(type: "income", name: name, amount: income, desc: desc, date: Date(), image: "", addedBy: addedBy, for_user: selected)
+            saveToFirebase(income: newIncome)
+
+        } else {
+            let newIncome = Transaction(type: "income", name: name, amount: income, desc: desc, date: Date(), image: "", addedBy: addedBy, for_user: addedBy)
+            saveToFirebase(income: newIncome)
+
         }
     }
     
-    func saveToFirebase(budget: Budget) {
-        let db = Firestore.firestore()
-        
-        db.collection("budget").addDocument(data: [
-            "name": budget.name,
-            "amount": budget.amount,
-            "date": budget.date,
-            "image": budget.image,
-            "addedBy": budget.addedBy,
-            "for_user": budget.for_user
+    func saveToFirebase(income: Transaction) {
+
+        database.collection("transactions").addDocument(data: [
+            "type": income.type,
+            "name": income.name,
+            "amount": income.amount,
+            "desc": income.desc,
+            "date": income.date,
+            "image": income.image,
+            "addedBy": income.addedBy,
+            "for_user": income.for_user
         ]) { error in
             if let error = error {
                 print("Error adding document: \(error)")

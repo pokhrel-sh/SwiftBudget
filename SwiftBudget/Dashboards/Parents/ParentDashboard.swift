@@ -9,7 +9,7 @@ import UIKit
 
 class ParentDashboard: UIView {
     
-    var labelAdd: UIButton!
+    var labelList: UILabel!
     var tableView: UITableView!
     
     override init(frame: CGRect) {
@@ -22,20 +22,13 @@ class ParentDashboard: UIView {
     }
     
     func setupLabelName(){
-        labelAdd = UIButton(type: .system)
-        labelAdd.setTitle("Add a Student Here!", for: .normal)
-        labelAdd.setImage(UIImage(systemName: "plus.message.fill")?.withRenderingMode(.alwaysOriginal), for: .normal)
-        labelAdd.contentHorizontalAlignment = .fill
-        labelAdd.contentVerticalAlignment = .fill
-        labelAdd.imageView?.contentMode = .scaleAspectFit
-        labelAdd.layer.cornerRadius = 16
-        labelAdd.imageView?.layer.shadowOffset = .zero
-        labelAdd.imageView?.layer.shadowRadius = 0.8
-        labelAdd.imageView?.layer.shadowOpacity = 0.7
-        labelAdd.imageView?.clipsToBounds = true
-        labelAdd.translatesAutoresizingMaskIntoConstraints = false
-        labelAdd.translatesAutoresizingMaskIntoConstraints = false
-        self.addSubview(labelAdd)
+        labelList = UILabel()
+        labelList.text = "Select a dependent to view their transaction history"
+        labelList.font = UIFont.systemFont(ofSize: 12)
+        labelList.lineBreakMode = .byWordWrapping
+        labelList.translatesAutoresizingMaskIntoConstraints = false
+        labelList.translatesAutoresizingMaskIntoConstraints = false
+        self.addSubview(labelList)
     }
     
     func setupTableViewFamily(){
@@ -47,10 +40,10 @@ class ParentDashboard: UIView {
     
     func setupConstraints() {
         NSLayoutConstraint.activate([
-            labelAdd.topAnchor.constraint(equalTo: self.safeAreaLayoutGuide.topAnchor, constant: 8),
-            labelAdd.centerXAnchor.constraint(equalTo: self.safeAreaLayoutGuide.centerXAnchor, constant: 16),
+            labelList.topAnchor.constraint(equalTo: self.safeAreaLayoutGuide.topAnchor, constant: 8),
+            labelList.centerXAnchor.constraint(equalTo: self.safeAreaLayoutGuide.centerXAnchor, constant: 16),
             
-            tableView.topAnchor.constraint(equalTo: labelAdd.bottomAnchor, constant: 16),
+            tableView.topAnchor.constraint(equalTo: labelList.bottomAnchor, constant: 16),
             tableView.leadingAnchor.constraint(equalTo:  self.safeAreaLayoutGuide.leadingAnchor, constant: 16),
             tableView.trailingAnchor.constraint(equalTo:  self.safeAreaLayoutGuide.trailingAnchor, constant: -16),
             tableView.bottomAnchor.constraint(equalTo:  self.safeAreaLayoutGuide.bottomAnchor, constant: -8),

@@ -10,16 +10,16 @@ import UIKit
 class ParentDashboardTableViewCell: UITableViewCell {
     var wrapperCellView: UIView!
     var labelName: UILabel!
-    //var labelEmail: UILabel!
-    //var labelBalance: UILabel!
+    var labelEmail: UILabel!
+    var labelBalance: UILabel!
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?){
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
         setupWrapperCellView()
         setupLabelName()
-        //setupLabelEmail()
-        //setupLabelBalance()
+        setupLabelEmail()
+        setupLabelBalance()
         
         initConstraints()
     }
@@ -44,7 +44,7 @@ class ParentDashboardTableViewCell: UITableViewCell {
         labelName.translatesAutoresizingMaskIntoConstraints = false
         wrapperCellView.addSubview(labelName)
     }
-    /*
+    
     func setupLabelEmail(){
         labelEmail = UILabel()
         labelEmail.font = UIFont.boldSystemFont(ofSize: 14)
@@ -58,7 +58,7 @@ class ParentDashboardTableViewCell: UITableViewCell {
         labelBalance.translatesAutoresizingMaskIntoConstraints = false
         wrapperCellView.addSubview(labelBalance)
     }
-    */
+    
     func initConstraints(){
         NSLayoutConstraint.activate([
             wrapperCellView.topAnchor.constraint(equalTo: self.topAnchor,constant: 10),
@@ -70,7 +70,7 @@ class ParentDashboardTableViewCell: UITableViewCell {
             labelName.leadingAnchor.constraint(equalTo: wrapperCellView.leadingAnchor, constant: 16),
             labelName.heightAnchor.constraint(equalToConstant: 20),
             labelName.widthAnchor.constraint(lessThanOrEqualTo: wrapperCellView.widthAnchor),
-            /*
+            
             labelEmail.topAnchor.constraint(equalTo: labelName.bottomAnchor, constant: 2),
             labelEmail.leadingAnchor.constraint(equalTo: labelName.leadingAnchor),
             labelEmail.heightAnchor.constraint(equalToConstant: 16),
@@ -80,8 +80,8 @@ class ParentDashboardTableViewCell: UITableViewCell {
             labelBalance.leadingAnchor.constraint(equalTo: labelEmail.leadingAnchor),
             labelBalance.heightAnchor.constraint(equalToConstant: 16),
             labelBalance.widthAnchor.constraint(lessThanOrEqualTo: labelName.widthAnchor),
-            */
-            wrapperCellView.heightAnchor.constraint(equalToConstant: 52)
+            
+            wrapperCellView.heightAnchor.constraint(equalToConstant: 72)
         ])
     }
     

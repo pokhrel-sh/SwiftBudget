@@ -12,11 +12,12 @@ class PersonalDashboardViewController: UIViewController {
     
     let database = Firestore.firestore()
     
+    var startDate = Date()
     var totalIncome = 0.0
     var totalExpense = 0.0
-    var balance = 0.0
     var name: String?
     var email: String?
+    var role: String?
     
     override func loadView() {
         view = dashboard
@@ -36,70 +37,54 @@ class PersonalDashboardViewController: UIViewController {
                 
                 self.setupRightBarButton(isLoggedin: true)
                 
-                self.listenToExpenses()
- 
-                self.listenToIncome()
+                self.database.collection("transactions")
+                    .whereField("for_user", isEqualTo: (self.currentUser?.email)!)
+                    .addSnapshotListener(includeMetadataChanges: false) { querySnapshot, error in
+                        if let error = error {
+                            print("Error fetching expenses: \(error.localizedDescription)")
+                            return
+                        }
+                        
+                        if let documents = querySnapshot?.documents {
+                            self.totalExpense = 0.0
+                            self.totalIncome = 0.0
+                            for document in documents {
+                                
+                                if let timestamp = document.data()["date"] as? Timestamp {
+                                    let date = timestamp.dateValue()
+                                    if self.startDate > date {
+                                        self.startDate = date
+                                        print("DATE: ")
+                                        print(self.startDate)
+                                        print(date)
+                                    }
+                                }
+                                 
+                                if let type = document.data()["type"] as? String,
+                                   let amount = document.data()["amount"] as? Double {
+                                    if type == "expense" {
+                                        self.totalExpense += amount
+                                    } else {
+                                        self.totalIncome += amount
+                                    }
+                                }
+                            }
+                                
+                            DispatchQueue.main.async {
+                                self.dashboard.totalExpenseValue.text = "$\(self.totalExpense)"
+                                self.dashboard.totalIncomeValue.text = "$\(self.totalIncome)"
+                                self.dashboard.netIncomeValue.text = "$\(self.totalIncome - self.totalExpense)"
+                                self.dashboard.startDate.text = "Start Date: \(self.startDate.formatted(date: .numeric, time: .omitted))"
+                            }
+                        }
+                    }
             }
         }
     }
-    
-    func listenToExpenses() {
-        self.database.collection("expenses")
-            .whereField("for_user", isEqualTo: (self.currentUser?.email)!)
-            .addSnapshotListener(includeMetadataChanges: false) { querySnapshot, error in
-                if let error = error {
-                    print("Error fetching expenses: \(error.localizedDescription)")
-                    return
-                }
-                
-                if let documents = querySnapshot?.documents {
-                    self.totalExpense = 0.0
-                    for document in documents {
-                        if let price = document.data()["price"] as? Double {
-                            self.totalExpense += price
-                            print("Updated Total Expense: \(self.totalExpense)")
-                        }
-                    }
-                    
-                    // Update the UI after expenses are fetched
-                    DispatchQueue.main.async {
-                        self.dashboard.totalExpenseValue.text = "$\(self.totalExpense)"
-                        self.dashboard.netIncomeValue.text = "$\(self.totalIncome - self.totalExpense)"
-                    }
-                }
-            }
-    }
-    
-    func listenToIncome() {
-        self.database.collection("budget")
-            .whereField("for_user", isEqualTo: (self.currentUser?.email)!)
-            .addSnapshotListener(includeMetadataChanges: false) { querySnapshot, error in
-                if let error = error {
-                    print("Error fetching income: \(error.localizedDescription)")
-                    return
-                }
-                
-                if let documents = querySnapshot?.documents {
-                    self.totalIncome = 0.0
-                    print("documents")
-                    for document in documents {
-                        if let amount = document.data()["amount"] as? Double {
-                            self.totalIncome += amount
-                            print("Updated Total Income: \(self.totalIncome)")
-                        }
-                    }
-                    
-                    DispatchQueue.main.async {
-                        self.dashboard.totalIncomeValue.text = "$\(self.totalIncome)"
-                        self.dashboard.netIncomeValue.text = "$\(self.totalIncome - self.totalExpense)"
-                    }
-                }
-            }
-    }
-    
+        
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "Summary!"
+        title = "Summary Page!"
         
         self.navigationItem.hidesBackButton = true
         
@@ -120,11 +105,13 @@ class PersonalDashboardViewController: UIViewController {
     
     @objc func addIncomeTapped() {
         let incomePage = AddingIncomeViewController()
+        incomePage.role = role
         navigationController?.pushViewController(incomePage, animated: true)
     }
     
     @objc func addExpenseTapped() {
         let expensePage = AddingExpenseViewController()
+        expensePage.role = role
         navigationController?.pushViewController(expensePage, animated: true)
     }
 }
